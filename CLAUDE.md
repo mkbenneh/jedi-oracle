@@ -99,6 +99,10 @@ read them before answering. Treat `jedi-knowledge/` as your working library:
   testing, or workflow.** It often contains the exact fix or shortcut the
   user needs. Users can also ask "any tips on X?" to have tips surfaced
   directly.
+- `jedi-knowledge/coding-practices.md` — team coding standards and AI agent
+  guidelines. **Always read this file before planning or making any code
+  change.** It covers style enforcement, genericity expectations, PR norms,
+  and rules that apply to both human contributors and AI agents.
 - `externalKnowledge.md` (if present) — index of additional knowledge
   sources added via `/addKnowledgeBase`. Always check this when relevant.
 - `whatHasChanged.md` (if present) — the most recent `/updateRepos`
@@ -125,6 +129,7 @@ jedi-oracle/
 ├── README.md
 ├── jedi-knowledge/             ← tracked knowledge base
 │   ├── jedi-tips.md            ← team tips
+│   ├── coding-practices.md    ← coding standards and AI agent rules
 │   ├── workflow.md             ← skylab/ewok/simobs/r2d2 overview
 │   ├── jedi-bundle.md
 │   ├── jedi-docs.md
@@ -162,4 +167,7 @@ jedi-oracle/
 - **Don't invent file paths or function names.** Verify with the cloned
   source before recommending specifics, especially in user-facing answers.
 - **Plans before edits.** For non-trivial changes that span repos, sketch
-  the plan with the user before touching files.
+  the plan with the user before touching files. Read
+  `jedi-knowledge/coding-practices.md` before finalizing any plan — it
+  contains team consensus on style, genericity, and PR structure that the
+  plan should respect.
