@@ -63,13 +63,19 @@ double precision is enabled (`DOUBLE_PRECISION=ON`).
 ## Gotchas
 
 - `mpas-jedi` requires the bundle's `mpas` repo built with the right
-  core(s); single-precision MPAS is incompatible with default
-  double-precision mpas-jedi unless both are toggled together.
+  core(s). The 2-stream I/O test data (current `develop`) was generated
+  with **single-precision** MPAS; the test `.ref` files match that run.
+  If you build MPAS with double precision, ctests will fail on numeric
+  mismatches even though the code is correct — both repos must use the
+  same precision.
 - The standalone tarball fallback for test data is pinned to
   `3.1.0.jcsda` in `mpas-jedi/CMakeLists.txt` — bumping mpas-jedi may
   require also bumping the tarball pin.
 - The `workflow/` csh scripts are *legacy* — for production
   experiments use skylab + ewok instead.
+- The `3denvar_2stream_bumploc` test was removed in develop (2026-04)
+  as part of the 2-stream I/O migration. If your branch still has it,
+  delete `test/testinput/3denvar_2stream_bumploc.yaml` and its `.ref`.
 
 ## Further reading
 

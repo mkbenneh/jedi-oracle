@@ -105,6 +105,12 @@ This is the largest and most actively-developed JEDI repo by file count.
   coefficient files at runtime; missing or version-mismatched
   coefficients produce confusing errors.
 - The repo is large; expect non-trivial build times. `ccache` helps.
+- `ImpactHeightCheck.h` — the superrefraction flag was renamed/changed
+  in develop (2026-04). If you have a local branch touching GNSS-RO,
+  check for conflicts with this change.
+- `CloudDetectMinResidualIR.cc` had ~15 lines removed in the same round
+  of warning cleanup. If merging from an older state, expect a conflict
+  in that file.
 
 ## Further reading
 

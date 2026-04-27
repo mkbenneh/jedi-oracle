@@ -33,7 +33,15 @@ workflow engine takes over.
   inclusion, validation).
 - `experiments/` — example experiments deployable on Derecho, Discover,
   Orion/Hercules, S4, and AWS.
-- `test/` — pytest suite, including `test_cylc_flow_generation.py`.
+- `test/` — pytest suite.
+  - `test_cylc_flow_generation.py` — Cylc workflow generation tests.
+  - `test_ecflow_def_generation.py` — ecFlow `.def` generation tests
+    (added 2026-04; see `test/testdata/*.def` for reference suites).
+  - `test/testdata/` — reference `.def` files: `gfs-3dvar-c24.def`,
+    `gfs-hofx-c24.def`, `jedi-ctest.def`, `skylab-atm-land-small.def`,
+    `workflow-engine-test.def`.
+  - `conftest.py` — shared pytest fixtures (significantly expanded in
+    2026-04 to support both Cylc and ecFlow tests).
 
 ## Key entry points
 

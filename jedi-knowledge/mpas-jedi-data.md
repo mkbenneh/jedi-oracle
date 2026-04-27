@@ -21,11 +21,15 @@ is just an `ecbuild_install_project` declaration. Content lives under
 
 All under `testinput_tier_1/`:
 
-- `384km/init/` — 384 km global mesh initial conditions.
-- `480km/bg/` — 480 km global mesh backgrounds.
-- `480km_2stream/` — 480 km mesh with 2-stream radiation fixtures.
+- `384km/bg/` — 384 km global mesh backgrounds (`mpasout.*.nc`, `x1.*.invariant.nc`).
+- `480km/bg/` — 480 km global mesh backgrounds (`mpasout.*.nc`, `EnsForCov.*.nc` for ensemble members, `x1.*.invariant.nc`).
 - `obs/mpasobsappend1/`, `obs/mpasobsappend2/` — observation files
   appended into the standard test set.
+
+> **Note:** The legacy `480km_2stream/` directory was removed in develop (2026-04).
+> Background and ensemble state files were renamed from the old `x1.*.init.*` / `restart.*`
+> convention to the 2-stream names `mpasout.*` / `EnsForCov.*`. `x1.*.invariant.nc`
+> files were added for both meshes. All paths in mpas-jedi test YAMLs were updated accordingly.
 
 ## Key files
 
@@ -46,6 +50,10 @@ All under `testinput_tier_1/`:
 
 - Directory layout is referenced by literal paths in mpas-jedi YAMLs.
   Renaming silently breaks downstream tests.
+- The 2-stream I/O data files (develop, 2026-04) were generated with a
+  **single-precision** MPAS build. A double-precision MPAS build produces
+  different numeric outputs; test `.ref` files in mpas-jedi match the
+  single-precision run.
 
 ## Further reading
 
