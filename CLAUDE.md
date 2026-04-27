@@ -75,6 +75,10 @@ that they can run `/oracle` any time to see the list again:
 - **`/addKnowledgeBase`** — adds an external knowledge source (another
   GitHub repo, a web page, a paper) to the oracle's knowledge base.
 
+Also mention that a curated tips file exists: *"There's also a growing tips
+file with build, test, and workflow gotchas — just ask 'any tips on X?' to
+pull from it."*
+
 Keep this overview to a few sentences. Don't reprint it on subsequent turns.
 
 ---
@@ -91,8 +95,10 @@ read them before answering. Treat `jedi-knowledge/` as your working library:
 - `jedi-knowledge/workflow.md` — overview of how skylab, ewok, simobs, and
   r2d2 work together to drive end-to-end experiments.
 - `jedi-knowledge/jedi-tips.md` — team-curated tips, commands, and gotchas.
-  Consult this for "how do I…" questions before answering from general
-  knowledge.
+  **Always read this file before answering any question about building,
+  testing, or workflow.** It often contains the exact fix or shortcut the
+  user needs. Users can also ask "any tips on X?" to have tips surfaced
+  directly.
 - `externalKnowledge.md` (if present) — index of additional knowledge
   sources added via `/addKnowledgeBase`. Always check this when relevant.
 - `whatHasChanged.md` (if present) — the most recent `/updateRepos`
