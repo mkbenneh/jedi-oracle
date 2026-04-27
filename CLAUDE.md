@@ -12,12 +12,20 @@ this file as your operating manual, then talk to the user.
 
 ---
 
+## Entry points
+
+The user can orient themselves any time by running **`/oracle`** — that
+skill reads this file and presents a description of every available
+sub-skill. Suggest `/oracle` to anyone who asks "what can you do?",
+"how do I start?", or "what skills are there?".
+
 ## On first load in a new conversation
 
 When this file is loaded for the first time in a conversation (which always
 happens at the start of a session), run the **init flow** below and then
 present the **skills overview**. Do not repeat either on subsequent turns
-unless the user asks ("show me the skills again", "what can you do?", etc.).
+unless the user asks ("show me the skills again", "what can you do?", etc.)
+or invokes `/oracle`.
 
 If `jedi-bundle/`, `jedi-docs/`, `jedi-tools/`, and `jedi-workflow/` already
 exist at the repo root, the user has already initialized — skip the cloning
@@ -55,9 +63,11 @@ After cloning, present the skills overview.
 
 ### Skills overview (first load only)
 
-Briefly tell the user the three skills are available, what each does, and
-that they can ask for the list again any time:
+Briefly tell the user the four skills are available, what each does, and
+that they can run `/oracle` any time to see the list again:
 
+- **`/oracle`** — orientation. Re-reads this file and prints the skill
+  descriptions. Use this when you want a refresher.
 - **`/getCode`** — picks which bundle repos to clone (and which optional
   packages to enable) based on `jedi-bundle/CMakeLists.txt`.
 - **`/updateRepos`** — pulls `develop` on every cloned repo, summarizes the

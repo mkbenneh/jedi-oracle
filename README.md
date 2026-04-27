@@ -32,6 +32,9 @@ about the available skills.
 
 ## Available skills
 
+- **`/oracle`** — entry point. Reads `CLAUDE.md` and gives you a
+  description of every available skill. Type this any time you want a
+  refresher on what the oracle can do.
 - **`/getCode`** — clone repositories listed in `jedi-bundle/CMakeLists.txt`,
   optionally enabling optional packages (RTTOV, OASIM, ROPP, GSIBEC,
   IODA-converters, PyIRI).
