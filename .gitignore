@@ -1,0 +1,21 @@
+# Cloned codebases (managed by /getCode and /init flow)
+jedi-bundle/
+jedi-docs/
+jedi-tools/
+jedi-workflow/
+
+# Build artifacts
+build/
+
+# Runtime files written by skills
+whatHasChanged.md
+externalKnowledge.md
+jedi-knowledge/external/
+
+# Editor / OS
+.DS_Store
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
