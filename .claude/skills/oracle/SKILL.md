@@ -51,6 +51,12 @@ This is the right command to suggest when:
      under `jedi-knowledge/external/<name>.md` and indexes it in
      `externalKnowledge.md` (gitignored — local to the user).
 
+   - **`/getProject`** — *Load personal project context.* Reads the
+     user's Claude memory files, filters for `type: project` entries,
+     lists them, and loads whichever the user selects into the current
+     conversation so the oracle is aware of active work without the user
+     having to re-explain it.
+
 4. **Check the workspace state.** If `jedi-bundle/`, `jedi-docs/`,
    `jedi-tools/`, or `jedi-workflow/` are missing at the oracle root,
    mention this and offer to walk through the init flow from

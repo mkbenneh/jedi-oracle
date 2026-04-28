@@ -74,6 +74,8 @@ that they can run `/oracle` any time to see the list again:
   diffs, and optionally refreshes the knowledge base in `jedi-knowledge/`.
 - **`/addKnowledgeBase`** — adds an external knowledge source (another
   GitHub repo, a web page, a paper) to the oracle's knowledge base.
+- **`/getProject`** — lists your personal project memories saved from
+  previous sessions and loads the ones you select into the current context.
 
 Also mention that a curated tips file exists: *"There's also a growing tips
 file with build, test, and workflow gotchas — just ask 'any tips on X?' to
