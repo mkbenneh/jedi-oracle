@@ -68,6 +68,11 @@ new dynamical core — it composes the two existing model wrappers.
 - The standalone `bundle/CMakeLists.txt` is for users who want to
   build *only* coupling-related deps; in the wider jedi-bundle it's
   redundant.
+- **FV3 exclude-variables list updated (2026-05, coupling#76):** all
+  nine test YAMLs in `test_mom6fv3/testinput/` had their excluded FV3
+  variable lists updated to reflect a change in FV3's variable naming.
+  If you are running coupled tests and they fail on unknown variable
+  names, check that your test YAMLs are current with develop.
 
 ## Further reading
 

@@ -13,6 +13,9 @@ UFO provides JEDI's `ObsTraits` and the bulk of observation-space code:
   scatwind/SST/aerosol/AOD/ozone/cloud-top/etc.
 - **QC filters** (`filters/`) — gross checks, background checks, bias
   predictors, history of value rejections.
+- **Obs functions** (`filters/obsfunctions/`) — includes new (2026-05)
+  `CircularDifference` (angular difference for wind directions, etc.) and
+  `TimeBinner` (time-window binning of obs values).
 - **Bias correction** (`predictors/` + `ObsBias*`) — the variational
   bias-correction infrastructure.
 - **Variable transforms** (`variabletransforms/`) — observation-side
@@ -111,6 +114,16 @@ This is the largest and most actively-developed JEDI repo by file count.
 - `CloudDetectMinResidualIR.cc` had ~15 lines removed in the same round
   of warning cleanup. If merging from an older state, expect a conflict
   in that file.
+- **QC flag API change (2026-05):** The QC flag `ObsDataVector` is now
+  passed as a reference rather than a shared pointer throughout the filter
+  stack (ufo#4112). All ~150 filter classes were updated; any local
+  branches touching filters will need rebasing.
+- **gsw cmake fix (2026-05):** `gsw_LIBRARIES` cmake usage was corrected
+  (ufo#4135); if your build was working around this, the workaround may
+  now conflict.
+- **GNSSRO test data downsized (2026-05):** large GNSSRO geoval files
+  were replaced with smaller variants in ufo-data (ufo-data#562). Tests
+  that referenced the old file sizes will need updating.
 
 ## Further reading
 

@@ -41,7 +41,8 @@ platform for new algorithms before they are wired into operational models.
   - `assimilation/` — cost functions (`CostFct3DVar`, `CostFct4DVar`,
     `CostFct4DEnsVar`, `CostFctFGAT`, `CostFctWeak`), minimizers (DRPCG,
     PCG, GMRES family, MINRES, Lanczos, saddle-point, LETKF/GETKF
-    solvers).
+    solvers), and as of 2026-05 the sequential ensemble solver framework
+    (`SequentialEnsembleSolver.h`, `EAKFSolver.h`).
   - `runs/` — top-level `Application` classes: `Variational`, `HofX3D`,
     `HofX4D`, `Forecast`, `EnsembleApplication`, `LocalEnsembleDA`,
     `ConvertState`, `EnsMeanAndVariance`, `GenEnsPertB`, `Test`. These
@@ -77,6 +78,9 @@ platform for new algorithms before they are wired into operational models.
   starts with (`oops::Run run(argc, argv); return run.execute(application);`).
 - `src/oops/runs/Variational.h` — variational DA driver (3DVar, 4DVar,
   EnVar, hybrid).
+- `src/oops/assimilation/SequentialEnsembleSolver.h` — new base class
+  for sequential ensemble solvers (LETKF/GETKF/EAKF share this).
+- `src/oops/assimilation/EAKFSolver.h` — new EAKF implementation (87 lines).
 - `src/oops/runs/HofX4D.h`, `HofX3D.h` — observation forward operator
   applications.
 - `src/oops/runs/LocalEnsembleDA.h` — EnKF / LETKF / GETKF entry point.
@@ -123,6 +127,19 @@ platform for new algorithms before they are wired into operational models.
   `project(... VERSION ...)` here means bumping pins everywhere.
 - The top-level `coupled/` subdirectory builds only when both QG and L95
   are enabled.
+- **QC flag API change (2026-05):** `ObsDataVector` QC flags are now
+  passed as references rather than shared pointers across the obs filter
+  stack. Any downstream code holding a `shared_ptr` to the QC flag vector
+  from `ObsFilter` / `ObsFilters` will need updating (see ufo#4112 /
+  oops#3267).
+- **`ModelData::defaultVariables` is no longer static (2026-05):** call
+  it on a model instance, not the class (oops#3244).
+- **`UnstructuredInterpolator` now fills outside regional domains
+  (2026-05):** behaviour changed — values outside the domain are
+  extrapolated rather than left undefined (oops#3264).
+- **RTPS is now incremental (2026-05):** `src/oops/base/RTPS.h` was
+  refactored; if you have local branches touching ensemble inflation,
+  check for conflicts (oops#3278).
 
 ## Further reading
 
