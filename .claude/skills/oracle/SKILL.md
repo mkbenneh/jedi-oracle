@@ -57,6 +57,12 @@ This is the right command to suggest when:
      conversation so the oracle is aware of active work without the user
      having to re-explain it.
 
+   - **`/investigateIssue`** — *Research a GitHub issue.* Asks for
+     keyword(s), searches issues you're involved in across all repos
+     (default `--involves=@me`), lets you pick from the matches, then
+     pulls the full issue and discussion with `gh` and writes a report
+     covering the problem, what the code shows, and possible solutions.
+
 4. **Check the workspace state.** If `jedi-bundle/`, `jedi-docs/`,
    `jedi-tools/`, or `jedi-workflow/` are missing at the oracle root,
    mention this and offer to walk through the init flow from

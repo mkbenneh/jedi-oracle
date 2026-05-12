@@ -63,7 +63,7 @@ After cloning, present the skills overview.
 
 ### Skills overview (first load only)
 
-Briefly tell the user the four skills are available, what each does, and
+Briefly tell the user the skills that are available, what each does, and
 that they can run `/oracle` any time to see the list again:
 
 - **`/oracle`** — orientation. Re-reads this file and prints the skill
@@ -76,6 +76,9 @@ that they can run `/oracle` any time to see the list again:
   GitHub repo, a web page, a paper) to the oracle's knowledge base.
 - **`/getProject`** — lists your personal project memories saved from
   previous sessions and loads the ones you select into the current context.
+- **`/investigateIssue`** — searches GitHub issues you're involved in
+  (across all repos) by keyword, lets you pick one, then pulls it with
+  `gh` and produces a research report with possible solutions.
 
 Also mention that a curated tips file exists: *"There's also a growing tips
 file with build, test, and workflow gotchas — just ask 'any tips on X?' to

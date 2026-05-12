@@ -11,6 +11,7 @@ build/
 whatHasChanged.md
 externalKnowledge.md
 jedi-knowledge/external/
+investigations/
 
 # Editor / OS
 .DS_Store
