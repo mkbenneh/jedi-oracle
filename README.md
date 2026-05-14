@@ -42,6 +42,11 @@ about the available skills.
   diffs, and (optionally) refresh the knowledge base to match.
 - **`/addKnowledgeBase`** — extend the oracle with an external resource:
   another GitHub repo, a web page, a paper, etc.
+- **`/getProject`** — load your personal project memories from previous
+  sessions so the oracle picks up active work without you re-explaining.
+- **`/investigateIssue`** — search GitHub issues you're involved in by
+  keyword, pick one, then pull the full issue with `gh` and produce a
+  research report covering the problem and possible solutions.
 
 ## Contributing
 
