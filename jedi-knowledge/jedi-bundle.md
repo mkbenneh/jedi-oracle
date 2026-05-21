@@ -54,6 +54,10 @@ Conceptually:
   `jedi-knowledge/mpas.md` for why.
 - Several optional packages (rttov, oasim) require licensed source you
   must have access to before cloning will succeed.
+- **MPAS-Model tag bumped to v8.4.0 (2026-05):** `CMakeLists.txt` now
+  pins `mpas` at `v8.4.0`. If you have `jedi-bundle/mpas` checked out
+  at an older tag, run `git -C jedi-bundle/mpas fetch && git -C
+  jedi-bundle/mpas checkout v8.4.0` before rebuilding.
 
 ## Further reading
 

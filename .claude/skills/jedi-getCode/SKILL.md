@@ -1,9 +1,9 @@
 ---
-name: getCode
+name: jedi-getCode
 description: Clone JEDI bundle repositories listed in jedi-bundle/CMakeLists.txt. Asks the user which repos to include and which optional packages to enable, then clones into jedi-bundle/<repo>/.
 ---
 
-# /getCode
+# /jedi-getCode
 
 Clone the JEDI bundle sub-repositories into `jedi-bundle/<repo>/`, using
 `jedi-bundle/CMakeLists.txt` as the source of truth for repo URLs and

@@ -1,12 +1,12 @@
 ---
-name: oracle
+name: jedi-oracle
 description: Entry point for the JEDI oracle. Reads CLAUDE.md and gives the user a description of every available skill. Use this when the user wants to know what the oracle can do, how to get started, or which sub-skill to reach for.
 ---
 
-# /oracle
+# /jedi-oracle
 
 The user-facing entry point for the JEDI oracle. When the user types
-`/oracle`, this skill orients them: it reads `CLAUDE.md` for the
+`/jedi-oracle`, this skill orients them: it reads `CLAUDE.md` for the
 operating context, then describes each sub-skill so the user knows
 what to invoke next.
 
@@ -32,32 +32,32 @@ This is the right command to suggest when:
    sub-skill's `SKILL.md` first if you need to refresh on details —
    don't paraphrase from memory.
 
-   - **`/getCode`** — *Clone bundle repositories.* Parses
+   - **`/jedi-getCode`** — *Clone bundle repositories.* Parses
      `jedi-bundle/CMakeLists.txt`, asks which repos to clone (all,
      whitelist, or blacklist) and which optional packages to enable
      (RTTOV, OASIM, ROPP, GSIBEC, IODA-converters, PyIRI), and clones
      the selected repos into `jedi-bundle/<repo>/`.
 
-   - **`/updateRepos`** — *Pull develop and refresh the knowledge
+   - **`/jedi-updateRepos`** — *Pull develop and refresh the knowledge
      base.* For every cloned repo (the bundle sub-repos plus
      `jedi-bundle/`, `jedi-docs/`, `jedi-tools/`, and the
      `jedi-workflow/` repos if present), pulls `develop`, summarizes
      the diffs to `whatHasChanged.md`, and asks whether to also
      update the per-repo briefs in `jedi-knowledge/` to match.
 
-   - **`/addKnowledgeBase`** — *Extend the oracle with an external
+   - **`/jedi-addKnowledgeBase`** — *Extend the oracle with an external
      resource.* Ingests another GitHub repo, a web page, a local
      PDF, or any other reference the user provides. Writes a brief
      under `jedi-knowledge/external/<name>.md` and indexes it in
      `externalKnowledge.md` (gitignored — local to the user).
 
-   - **`/getProject`** — *Load personal project context.* Reads the
+   - **`/jedi-getProject`** — *Load personal project context.* Reads the
      user's Claude memory files, filters for `type: project` entries,
      lists them, and loads whichever the user selects into the current
      conversation so the oracle is aware of active work without the user
      having to re-explain it.
 
-   - **`/investigateIssue`** — *Research a GitHub issue.* Asks for
+   - **`/jedi-investigateIssue`** — *Research a GitHub issue.* Asks for
      keyword(s), searches issues you're involved in across all repos
      (default `--involves=@me`), lets you pick from the matches, then
      pulls the full issue and discussion with `gh` and writes a report
@@ -81,5 +81,5 @@ This is the right command to suggest when:
   has the depth; this is the elevator pitch.
 - Don't reprint the entire `CLAUDE.md`. Reading it gives you context;
   the user just needs the highlights.
-- After running `/oracle` once in a conversation, don't repeat the
+- After running `/jedi-oracle` once in a conversation, don't repeat the
   full overview unless the user asks.

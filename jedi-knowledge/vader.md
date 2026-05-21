@@ -115,6 +115,12 @@ the default cookbook in YAML.
   APIs (see `TestPrintVader.cc`) to debug recipe selection.
 - Tests are skipped (with status message) when `jedi-model-data` is
   missing — silently passing builds aren't actually testing anything.
+- **`AirPotentialTemperature_B` formula bug fixed (2026-05):**
+  `src/vader/recipes/AirPotentialTemperature_B.cc` — the formula was
+  missing the `p0^kappa` factor (vader#365). If your experiment uses
+  the `_B` variant of this recipe (i.e. the inputs resolve to it rather
+  than `_A` or `_C`), check that your result is numerically consistent
+  with the fixed formula before comparing against old references.
 
 ## Further reading
 

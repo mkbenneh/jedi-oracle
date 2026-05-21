@@ -90,6 +90,22 @@ The library provides:
 - `Halo` distribution is the typical choice for high-resolution global
   models; `RoundRobin` is a fallback for testing. Picking the wrong
   one can dramatically change MPI load balance.
+- **`ObsSpace::put_db` now requires `dimList` (2026-05):** the API
+  was tightened to require an explicit dimension list (ioda#1731).
+  All ufo and ioda call sites were updated; any local branch calling
+  `put_db` must add the `dimList` argument.
+- **CDA: obs outside the shifted window are now discarded (2026-05):**
+  `src/ObsSpace.cc` now removes observations outside the shifted
+  assimilation window when running CDA (ioda#1722). Affects obs counts
+  in CDA experiments.
+- **Empty ObsSpace output supported in OSDF flow (2026-05):**
+  writing output files for an empty `ObsSpace` via the OSDF container
+  is now handled correctly (ioda#1740).
+- **`DistributionParametersBase` name Parameter no longer has a default
+  (2026-05):** you must now explicitly set the `name` key in your YAML
+  `distribution:` block (ioda#1742).
+- **New `ioda_compare_nc.py` tool (2026-05):** `tools/ioda_compare_nc.py`
+  added for comparing IODA NetCDF output files (ioda#1750).
 
 ## Further reading
 

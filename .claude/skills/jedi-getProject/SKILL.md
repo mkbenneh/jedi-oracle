@@ -1,9 +1,9 @@
 ---
-name: getProject
+name: jedi-getProject
 description: Load a user's personal project memories into the oracle's context. Lists all project-type memory entries from the user's Claude memory files, then asks which ones to read in full so the oracle is aware of the active work.
 ---
 
-# /getProject
+# /jedi-getProject
 
 Brings a user's personal project context into the current conversation.
 The oracle's memory system stores project snapshots from previous sessions

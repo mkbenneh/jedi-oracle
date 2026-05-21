@@ -13,9 +13,11 @@ UFO provides JEDI's `ObsTraits` and the bulk of observation-space code:
   scatwind/SST/aerosol/AOD/ozone/cloud-top/etc.
 - **QC filters** (`filters/`) — gross checks, background checks, bias
   predictors, history of value rejections.
-- **Obs functions** (`filters/obsfunctions/`) — includes new (2026-05)
-  `CircularDifference` (angular difference for wind directions, etc.) and
-  `TimeBinner` (time-window binning of obs values).
+- **Obs functions** (`filters/obsfunctions/`) — includes (2026-05)
+  `CircularDifference` (angular difference for wind directions),
+  `TimeBinner` (time-window binning), `ProfileVerticalSmoothing`
+  (vertical smoothing along a profile), and `Statistic` (global
+  statistics across all MPI ranks).
 - **Bias correction** (`predictors/` + `ObsBias*`) — the variational
   bias-correction infrastructure.
 - **Variable transforms** (`variabletransforms/`) — observation-side
@@ -124,6 +126,24 @@ This is the largest and most actively-developed JEDI repo by file count.
 - **GNSSRO test data downsized (2026-05):** large GNSSRO geoval files
   were replaced with smaller variants in ufo-data (ufo-data#562). Tests
   that referenced the old file sizes will need updating.
+- **New `DuplicateThinning` filter (2026-05):**
+  `src/ufo/filters/DuplicateThinning.{h,cc}` (ufo#4086). Registered in
+  `instantiateObsFilterFactory.h`. Use in YAML as
+  `filter: Duplicate Thinning`.
+- **New `ProfileVerticalSmoothing` obs function (2026-05):**
+  `src/ufo/filters/obsfunctions/ProfileVerticalSmoothing.{h,cc}`
+  (ufo#4032). Documented in jedi-docs at
+  `docs/jedi-components/ufo/qcfilters/obsfunctions/ProfileVerticalSmoothing.rst`.
+- **New `Statistic` obs function (2026-05):**
+  `src/ufo/filters/obsfunctions/Statistic.{h,cc}` (ufo#4091). Computes
+  global statistics (mean, RMS, …) across all MPI ranks.
+- **`ObsErrorDiffusion` mesh moved to `update` method (2026-05):**
+  Mesh construction previously done at construction is now deferred to
+  the `update` call (ufo#4129). Local branches overriding
+  `ObsErrorDiffusion` will need rebasing.
+- **`ObsSpace::put_db` now requires `dimList` (2026-05):** all call
+  sites in ufo were updated (ufo#4126); check local branches that call
+  `put_db` directly.
 
 ## Further reading
 

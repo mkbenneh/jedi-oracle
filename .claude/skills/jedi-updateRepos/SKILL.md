@@ -1,9 +1,9 @@
 ---
-name: updateRepos
+name: jedi-updateRepos
 description: Pull develop on every cloned JEDI repo, summarize the diffs to whatHasChanged.md, and optionally refresh the knowledge base in jedi-knowledge/ to match the new state.
 ---
 
-# /updateRepos
+# /jedi-updateRepos
 
 Pull the latest `develop` on every cloned JEDI repo under the oracle root,
 write a summary of what changed to `whatHasChanged.md`, and optionally
@@ -16,7 +16,7 @@ A "cloned repo" is any of these directories that exists and is a git
 working tree:
 
 - `jedi-bundle/` itself
-- `jedi-bundle/<repo>/` for each sub-repo cloned by `/getCode`
+- `jedi-bundle/<repo>/` for each sub-repo cloned by `/jedi-getCode`
 - `jedi-docs/`
 - `jedi-tools/`
 - `jedi-workflow/skylab/`, `jedi-workflow/ewok/`,

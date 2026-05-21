@@ -76,6 +76,27 @@ double precision is enabled (`DOUBLE_PRECISION=ON`).
 - The `3denvar_2stream_bumploc` test was removed in develop (2026-04)
   as part of the 2-stream I/O migration. If your branch still has it,
   delete `test/testinput/3denvar_2stream_bumploc.yaml` and its `.ref`.
+- **New `"regional nn fill distance in km"` geometry parameter
+  (2026-05):** added in `src/mpasjedi/Geometry/GeometryParameters.h`
+  and the Fortran geom module (mpas-jedi#1199). Controls nearest-
+  neighbour fill distance for regional mesh geometries.
+- **Regional mesh ctests (2026-05):** two new ctests added:
+  `3denvar_multi_resolution_regional` (384 km mesh) and
+  `parameters_bumploc_regional` (480 km mesh with ensemble). Requires
+  the new `mpas-jedi-data` regional test data (384km/480km NetCDF +
+  ensemble members). Test namelists live in
+  `test/namelists/384km/` and `test/namelists/480km/`.
+- **`smoke_fine` added to `field_is_scalar` logic (2026-05):**
+  `src/mpasjedi/Fields/mpas_fields_mod.F90` / the DA path — affects
+  which fields are treated as scalars. If you have branches patching this
+  function, check for merge conflicts (mpas-jedi#1136).
+- **2m T,q now updated between outer loops (2026-05):**
+  `src/mpasjedi/State/mpas_state_mod.F90` (mpas-jedi#1174). Affects
+  multi-outer-loop experiments; reference outputs were updated.
+- **EnKF test references updated (2026-05):** three enkf-related ctest
+  outputs were updated to reflect the GETKF QC change from oops (apply
+  QC to ensemble mean/modulated members). Rebuild and re-run ctests if
+  your build predates this.
 
 ## Further reading
 

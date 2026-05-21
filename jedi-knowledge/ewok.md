@@ -89,6 +89,11 @@ Knowledge Base notes referenced in the README.
 - Globus / NASA Earthdata / JAXA / RDA each have their own auth setup
   for ingest tasks. The README has detailed walkthroughs — start there
   rather than improvising.
+- **Common prepbufr handling refactored (2026-05):**
+  `src/ewok/tasks/convertObservations.py` and `storeObsBias.py` were
+  updated to share common prepbufr handling logic (ewok#1282). If you
+  have local branches touching these task files, check for merge
+  conflicts.
 
 ## Further reading
 

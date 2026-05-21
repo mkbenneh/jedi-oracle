@@ -1,9 +1,9 @@
 ---
-name: addKnowledgeBase
+name: jedi-addKnowledgeBase
 description: Add an external resource (GitHub repo, web page, local PDF, etc.) to the oracle's knowledge base. Writes a per-resource brief to jedi-knowledge/external/ and indexes it in externalKnowledge.md.
 ---
 
-# /addKnowledgeBase
+# /jedi-addKnowledgeBase
 
 Extend the oracle's knowledge base with an external resource so future
 questions can draw on it. Output goes to:
@@ -75,7 +75,7 @@ shared oracle repo.
    ```markdown
    # External knowledge base
 
-   Per-user index of external resources added via /addKnowledgeBase.
+   Per-user index of external resources added via /jedi-addKnowledgeBase.
    Gitignored — these are local to your checkout.
 
    ## Resources

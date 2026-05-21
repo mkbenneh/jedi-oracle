@@ -69,6 +69,12 @@ directory in this oracle layout.
 - Some observation ingest paths require external credentials (NASA
   Earthdata, JAXA G-Portal, NCAR RDA via Globus). See `ewok.md` and
   the EWOK README for setup.
+- **`adpsfc_ncep_prepbufr` now assimilated (2026-05):**
+  `obs/ufo/adpsfc_ncep_prepbufr.yaml` was updated with expanded
+  variable/channel settings so surface BUFR observations can be
+  assimilated (skylab#901). If your experiments skip this type, no
+  action needed; if you were working around the old incomplete YAML,
+  remove the workaround.
 
 ## Further reading
 

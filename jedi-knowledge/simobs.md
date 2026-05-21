@@ -53,6 +53,14 @@ spinning up a full DA cycle.
 - The internal Slack channel referenced in the README
   (`jcsda.slack.com/archives/C02TR52N0B0`) is the active place for
   current usage questions.
+- **Plotting improvements (2026-05):** several plotting modules in
+  `src/simobs/plotting/` were updated (simobs#379, #373):
+  - `plot_time_bar.py` — x-axis corrected to account for initial files
+    not starting at 00 UTC.
+  - `plot_global_scatter_map.py`, `plot_maps.py`, `plot_rad_stats.py`,
+    `skylab_monitor.py` — `map_center` keyword argument and other
+    keyword-arg cleanup. If you call these directly with positional args,
+    check that the call signature still matches.
 
 ## Further reading
 

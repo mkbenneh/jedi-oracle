@@ -32,19 +32,19 @@ about the available skills.
 
 ## Available skills
 
-- **`/oracle`** — entry point. Reads `CLAUDE.md` and gives you a
+- **`/jedi-oracle`** — entry point. Reads `CLAUDE.md` and gives you a
   description of every available skill. Type this any time you want a
   refresher on what the oracle can do.
-- **`/getCode`** — clone repositories listed in `jedi-bundle/CMakeLists.txt`,
+- **`/jedi-getCode`** — clone repositories listed in `jedi-bundle/CMakeLists.txt`,
   optionally enabling optional packages (RTTOV, OASIM, ROPP, GSIBEC,
   IODA-converters, PyIRI).
-- **`/updateRepos`** — pull `develop` on every cloned repo, summarize the
+- **`/jedi-updateRepos`** — pull `develop` on every cloned repo, summarize the
   diffs, and (optionally) refresh the knowledge base to match.
-- **`/addKnowledgeBase`** — extend the oracle with an external resource:
+- **`/jedi-addKnowledgeBase`** — extend the oracle with an external resource:
   another GitHub repo, a web page, a paper, etc.
-- **`/getProject`** — load your personal project memories from previous
+- **`/jedi-getProject`** — load your personal project memories from previous
   sessions so the oracle picks up active work without you re-explaining.
-- **`/investigateIssue`** — search GitHub issues you're involved in by
+- **`/jedi-investigateIssue`** — search GitHub issues you're involved in by
   keyword, pick one, then pull the full issue with `gh` and produce a
   research report covering the problem and possible solutions.
 

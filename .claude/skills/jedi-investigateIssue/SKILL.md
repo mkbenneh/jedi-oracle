@@ -1,9 +1,9 @@
 ---
-name: investigateIssue
+name: jedi-investigateIssue
 description: Search GitHub issues the user is involved in (across all repos) by keyword, let the user pick one, then pull the full issue with the gh CLI and produce a research report covering the problem and possible solutions.
 ---
 
-# /investigateIssue
+# /jedi-investigateIssue
 
 Help the user dig into a GitHub issue they care about — without needing to
 know which repo it lives in. The skill searches across all repos the user
@@ -129,7 +129,7 @@ needed if results look incomplete.
 9. **Offer follow-ups.** At the end, ask whether the user wants to:
    - Save the report to a file (e.g. `investigations/<repo>-<num>.md`)
    - Save a project memory so future sessions remember this investigation
-     (see the memory system referenced by `/getProject`)
+     (see the memory system referenced by `/jedi-getProject`)
    - Draft a reply comment, a PR plan, or a reproducer
 
 ## Notes
@@ -143,7 +143,7 @@ needed if results look incomplete.
 - **Respect CLAUDE.md operating principles.** Cite knowledge files,
   cite code with `path:line`, trust current code over cached briefs,
   and be honest about uncertainty. If a brief contradicts the cloned
-  source, offer `/updateRepos` to refresh.
+  source, offer `/jedi-updateRepos` to refresh.
 - **Keep it scoped.** If the issue is sprawling (long thread, many
   linked PRs), ask the user which angle to dig into first rather than
   trying to cover everything at once.

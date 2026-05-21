@@ -14,9 +14,9 @@ this file as your operating manual, then talk to the user.
 
 ## Entry points
 
-The user can orient themselves any time by running **`/oracle`** — that
+The user can orient themselves any time by running **`/jedi-oracle`** — that
 skill reads this file and presents a description of every available
-sub-skill. Suggest `/oracle` to anyone who asks "what can you do?",
+sub-skill. Suggest `/jedi-oracle` to anyone who asks "what can you do?",
 "how do I start?", or "what skills are there?".
 
 ## On first load in a new conversation
@@ -25,7 +25,7 @@ When this file is loaded for the first time in a conversation (which always
 happens at the start of a session), run the **init flow** below and then
 present the **skills overview**. Do not repeat either on subsequent turns
 unless the user asks ("show me the skills again", "what can you do?", etc.)
-or invokes `/oracle`.
+or invokes `/jedi-oracle`.
 
 If `jedi-bundle/`, `jedi-docs/`, `jedi-tools/`, and `jedi-workflow/` already
 exist at the repo root, the user has already initialized — skip the cloning
@@ -41,7 +41,7 @@ present.
 1. **`jedi-bundle/`** — if missing, offer to clone it:
    `git clone https://github.com/jcsda-internal/jedi-bundle.git jedi-bundle`
    This is just the bundle wrapper (CMakeLists + scripts) — sub-repos are
-   cloned later via `/getCode`.
+   cloned later via `/jedi-getCode`.
 2. **`jedi-docs/`** — ask: *"Want me to clone jedi-docs alongside?"* If yes:
    `git clone https://github.com/jcsda-internal/jedi-docs.git jedi-docs`
 3. **`jedi-tools/`** — ask: *"Want jedi-tools? It needs git-lfs enabled
@@ -64,19 +64,19 @@ After cloning, present the skills overview.
 ### Skills overview (first load only)
 
 Briefly tell the user the skills that are available, what each does, and
-that they can run `/oracle` any time to see the list again:
+that they can run `/jedi-oracle` any time to see the list again:
 
-- **`/oracle`** — orientation. Re-reads this file and prints the skill
+- **`/jedi-oracle`** — orientation. Re-reads this file and prints the skill
   descriptions. Use this when you want a refresher.
-- **`/getCode`** — picks which bundle repos to clone (and which optional
+- **`/jedi-getCode`** — picks which bundle repos to clone (and which optional
   packages to enable) based on `jedi-bundle/CMakeLists.txt`.
-- **`/updateRepos`** — pulls `develop` on every cloned repo, summarizes the
+- **`/jedi-updateRepos`** — pulls `develop` on every cloned repo, summarizes the
   diffs, and optionally refreshes the knowledge base in `jedi-knowledge/`.
-- **`/addKnowledgeBase`** — adds an external knowledge source (another
+- **`/jedi-addKnowledgeBase`** — adds an external knowledge source (another
   GitHub repo, a web page, a paper) to the oracle's knowledge base.
-- **`/getProject`** — lists your personal project memories saved from
+- **`/jedi-getProject`** — lists your personal project memories saved from
   previous sessions and loads the ones you select into the current context.
-- **`/investigateIssue`** — searches GitHub issues you're involved in
+- **`/jedi-investigateIssue`** — searches GitHub issues you're involved in
   (across all repos) by keyword, lets you pick one, then pulls it with
   `gh` and produces a research report with possible solutions.
 
@@ -109,8 +109,8 @@ read them before answering. Treat `jedi-knowledge/` as your working library:
   change.** It covers style enforcement, genericity expectations, PR norms,
   and rules that apply to both human contributors and AI agents.
 - `externalKnowledge.md` (if present) — index of additional knowledge
-  sources added via `/addKnowledgeBase`. Always check this when relevant.
-- `whatHasChanged.md` (if present) — the most recent `/updateRepos`
+  sources added via `/jedi-addKnowledgeBase`. Always check this when relevant.
+- `whatHasChanged.md` (if present) — the most recent `/jedi-updateRepos`
   summary. Reference it when the user asks "what's new" or "what changed
   recently".
 
@@ -119,7 +119,7 @@ the brief points to specific files in a cloned repo, read those files (the
 clones are real, just gitignored). The cloned code is always more
 authoritative than the brief, so verify before recommending specifics.
 
-If the relevant repo isn't cloned yet, say so and offer to run `/getCode` (or
+If the relevant repo isn't cloned yet, say so and offer to run `/jedi-getCode` (or
 the appropriate clone command).
 
 ---
@@ -142,7 +142,7 @@ jedi-oracle/
 │   ├── oops.md, ufo.md, ioda.md, saber.md, vader.md, …
 │   ├── fv3-jedi.md, mpas-jedi.md, soca.md, coupling.md, …
 │   ├── skylab.md, ewok.md, simobs.md, r2d2.md
-│   └── external/               ← /addKnowledgeBase output (gitignored)
+│   └── external/               ← /jedi-addKnowledgeBase output (gitignored)
 ├── .claude/skills/             ← slash command definitions
 ├── jedi-bundle/                ← cloned (gitignored)
 ├── jedi-docs/                  ← cloned, optional (gitignored)
@@ -152,8 +152,8 @@ jedi-oracle/
 │   ├── ewok/
 │   ├── simobs/
 │   └── r2d2/
-├── whatHasChanged.md           ← /updateRepos output (gitignored)
-└── externalKnowledge.md        ← /addKnowledgeBase index (gitignored)
+├── whatHasChanged.md           ← /jedi-updateRepos output (gitignored)
+└── externalKnowledge.md        ← /jedi-addKnowledgeBase index (gitignored)
 ```
 
 ---
@@ -165,7 +165,7 @@ jedi-oracle/
 - **Cite source code** with `path:line` when you reference cloned code.
 - **Trust current code over cached knowledge.** If a knowledge brief
   contradicts what's in the cloned repo, the code wins — and offer to run
-  `/updateRepos` (with the KB-refresh option) to bring the briefs current.
+  `/jedi-updateRepos` (with the KB-refresh option) to bring the briefs current.
 - **Be honest about uncertainty.** JEDI is large and changing. If you don't
   know, say so and point at where to look (a doc URL in `jedi-docs/`, a
   specific source file, or a teammate's tip in `jedi-tips.md`).

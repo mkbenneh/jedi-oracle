@@ -140,6 +140,17 @@ platform for new algorithms before they are wired into operational models.
 - **RTPS is now incremental (2026-05):** `src/oops/base/RTPS.h` was
   refactored; if you have local branches touching ensemble inflation,
   check for conflicts (oops#3278).
+- **Implicit vertical diffusion added to `Diffusion` (2026-05):**
+  `src/oops/generic/Diffusion.{h,cc}` gained an implicit-scheme
+  option (oops#3275). The corresponding SABER block and UFO error model
+  were extended in lockstep — test YAMLs exist in saber and jedi-docs.
+- **`ObsVariables::dimList()` added (2026-05):** new member function
+  on `src/oops/base/ObsVariables.h` (oops#3281); downstream `put_db`
+  callers in ufo and ioda were also updated — local branches touching
+  `ObsSpace::put_db` calls must add the `dimList` argument.
+- **QC now applied to ensemble mean and modulated members in GETKF
+  (2026-05):** `GETKFSolver.h` and `LocalEnsembleSolver.h` updated
+  (oops#3231). Check test references if running l/getkf experiments.
 
 ## Further reading
 

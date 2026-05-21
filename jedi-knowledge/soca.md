@@ -71,6 +71,15 @@ git submodules under `external/`, so SOCA pulls them along with itself.
 - The 72×35×25 test grid is a low-res tri-polar configuration —
   realistic ocean DA experiments use higher-res configs from
   user-supplied data, not the bundled fixture.
+- **New direct NetCDF I/O module (2026-05):** `src/soca/IO/soca_io_mod.F90`
+  (1005 lines) was added as a new CMake sub-library `soca_IO` (soca#1242).
+  `soca_fields_mod.F90` and `soca_geom_mod.F90` were refactored to use
+  it. If you have local branches touching SOCA state/geometry I/O, expect
+  significant merge conflicts.
+- **l/getkf test references updated (2026-05):** all letkf/getkf test
+  refs were regenerated for the QC change (apply QC to ensemble
+  mean/modulated members, oops#3231). Rebuild and re-run
+  `ctest -R soca_letkf` if your build predates this.
 
 ## Further reading
 

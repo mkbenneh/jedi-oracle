@@ -146,6 +146,20 @@ response) without needing a full atmospheric model.
   if you don't have jedicmake or want a faster build.
 - BUMP instrumentation is a separate compile flag
   (`-DENABLE_BUMP_INSTRUMENTATION=ON`) used for performance studies.
+- **Implicit vertical diffusion added (2026-05):** `DiffusionImpl.cc`
+  gained an implicit-scheme option (saber#1234), mirroring oops#3275 and
+  UFO's `ObsErrorDiffusion` update. New test YAMLs:
+  `test/testinput/dirac_diffusion_implicit_vt.yaml` and
+  `error_covariance_training_diffusion_implicit_vt.yaml`.
+- **GSI-bec now supports regional fv3jedi and mpasjedi (2026-05):**
+  `src/saber/gsi/covariance/gsi_covariance_mod.f90` and
+  `src/saber/gsi/grid/gsi_grid_mod.f90` were extended (saber#1088).
+  Requires `gsibec`; the GSI-bec test lists (`saber_gsi-geos.cmake`,
+  `saber_gsi-gfs.cmake`) have new test entries.
+- **Halo-point fix at limited-domain lateral boundaries (2026-05):**
+  `src/saber/interpolation/Geometry.cc` — missing halo points along
+  the edges of limited domains were previously handled incorrectly
+  (saber#1189). Affects FastLAM and regional-domain B configurations.
 
 ## Further reading
 
