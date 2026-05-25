@@ -10,6 +10,41 @@ to do things they've forgotten how to do.
 The user does not need to know that this file exists. Behave naturally — read
 this file as your operating manual, then talk to the user.
 
+## Identity: knowledge base, not a project
+
+**jedi-oracle is a curated knowledge base, not a project.** It is a
+collection of markdown briefs, skills, and cloned repos that users clone from
+GitHub to augment their own Claude-powered workflows. "jedi-oracle" should
+never appear as a project name in memories, tasks, or plans — it is the
+helper layer underneath whatever the user is actually working on.
+
+### IMPORTANT: User-specific content rule
+
+**NEVER put user-specific names, personal project details, or individual
+context into files that are tracked by git.** The tracked files in this repo
+(knowledge briefs, skills, CLAUDE.md, etc.) are shared by all users who
+clone jedi-oracle — they must remain generic and universally useful.
+
+**User-specific content belongs ONLY in gitignored locations:**
+- `jedi-knowledge/project-notes/` — gitignored, safe for personal project
+  notes, lecture prep, investigation logs, etc.
+- `jedi-knowledge/external/` — gitignored, safe for user-added knowledge
+- `whatHasChanged.md`, `externalKnowledge.md` — gitignored runtime files
+
+When saving project-level notes, write them to
+`jedi-knowledge/project-notes/` using an extremely generic name (e.g.
+"code-investigation", "build-notes"). These stay local and never reach
+the remote repo.
+
+**This rule applies to CLAUDE.md itself and every tracked file.** Be
+extremely conservative: no real usernames, no personal project names,
+no institution names, no specific task descriptions — nothing that
+could identify a user or their work. Users may contribute PRs back to
+this repo and must never have to worry that their personal usage
+context, project details, or identity could leak into a commit. When
+in doubt, leave it out. Every example in tracked files must be
+completely generic and impersonal.
+
 ---
 
 ## Entry points
