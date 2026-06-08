@@ -97,6 +97,22 @@ double precision is enabled (`DOUBLE_PRECISION=ON`).
   outputs were updated to reflect the GETKF QC change from oops (apply
   QC to ensemble mean/modulated members). Rebuild and re-run ctests if
   your build predates this.
+- **CO2 absorber for CrIS & IASI (2026-06, mpas-jedi#1203):** the CRTM
+  operator now includes CO2 as an absorber for CrIS and IASI channels.
+  Affects HofX and radiance assimilation tests — `hofx3d.ref`, `hofx4d.ref`,
+  and related refs were updated.
+- **CDA ctest expansion (2026-06, mpas-jedi#1146):** `3dfgat_cda.yaml`,
+  `4dfgat_cda.yaml`, and associated ref files were updated to exercise new
+  CDA capabilities. `3dfgat_cda` was also given `tier2` labels (mpas-jedi#1205).
+- **Integer field interpolation type (2026-06, mpas-jedi#1200):** the
+  interpolation type for integer fields was corrected in
+  `src/mpasjedi/Fields/mpas_fields_mod.F90`. Affects model and state
+  init paths.
+- **Broad ref-output update (2026-06, mpas-jedi#1204):** 55 files changed
+  (2687 ins, 2637 del) — letkf, lgetkf, parameters_bumpcov/bumploc,
+  process_perts_spectral, rtpp, 3denvar, 4denvar, eda, forecast, hofx,
+  dirac, gen_ens_pert_B refs all regenerated. Any branch with local edits
+  to these files should expect heavy merge conflicts.
 
 ## Further reading
 

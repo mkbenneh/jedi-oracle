@@ -106,6 +106,21 @@ The library provides:
   `distribution:` block (ioda#1742).
 - **New `ioda_compare_nc.py` tool (2026-05):** `tools/ioda_compare_nc.py`
   added for comparing IODA NetCDF output files (ioda#1750).
+- **IFrame slicing interface (2026-06, ioda#1768):** `src/containers/IFrame.h`
+  defines a new abstract interface for slicing the data frame; `FrameCols`
+  and `FrameRows` now implement it with new ctests. If you subclass either,
+  add the `IFrame` virtual overrides.
+- **ObsWriter added (2026-06, ioda#1755 area):** `src/writer/ObsWriter.cpp/.hpp`
+  and `test/mains/writer/TestObsWriter.cc` introduce a dedicated writer
+  class. The `obsSpace::save` function gained a flag to preserve the MPI
+  distribution when writing (ioda#1755).
+- **OSDF put_db no-op on empty vector (2026-06, ioda#1767):** `put_db`
+  performs a no-op when the data vector is empty, preventing spurious errors
+  in OSDF-based flows that write optional fields.
+- **Fortran API split (2026-06, ioda#1756):** The ObsSpace Fortran API and
+  the ioda-engines Fortran API are now two separate independent packages
+  under `src/engines/ioda/fortran/`. If your Fortran code used the combined
+  interface, update your `USE` statements to target the appropriate package.
 
 ## Further reading
 

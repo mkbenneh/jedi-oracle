@@ -122,6 +122,12 @@ radiance forward models; this repo provides the CRTM side.
 - The repository contains both the modern CMake build and a legacy
   autotools / `Makefile` build under `src/`. JEDI uses CMake exclusively;
   ignore the `Makefile` artifacts.
+- **Coefficient download path changed (2026-06, crtm#302):** The directory
+  where CRTM downloads its coefficient files was decoupled from UFO's
+  expected path. `test/CMakeLists.txt` now sets a CMake property so UFO can
+  discover the downloaded coefficient path without hard-coding the UFO
+  subdirectory. If you have custom logic that assumed coefficients land under
+  the UFO subtree, update it to use the CRTM-exported path property instead.
 
 ## Further reading
 

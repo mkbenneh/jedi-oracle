@@ -50,6 +50,23 @@ independent rendered site.
 - **Read a how-to that doesn't fit Sphinx** — check `howto/`. These
   are working notes / tips, less polished than the main docs.
 
+## Recent additions (2026-06)
+
+- **LinearTimeInterpolate obsfunction** — new page at
+  `docs/inside/jedi-components/ufo/qcfilters/obsfunctions/LinearTimeInterpolate.rst`
+  (290 lines) documenting the piecewise linear time interpolation/extrapolation
+  obs function added to UFO.
+- **Polygon Check filter** — illustrated with a new example image at
+  `docs/inside/jedi-components/ufo/qcfilters/images/polygon-check-example.png`.
+- **QCmanager consolidation** — `FinalCheck` filter documentation removed;
+  `GenericQC.rst` and `introduction.rst` updated to reflect FinalCheck's
+  merge into the QCmanager filter.
+- **Local ensemble DA** — `oops/applications/localensembleda.rst` and
+  `oops/algorithmic_details/ETKF.rst` updated with new detail on linear
+  observation operators in ensemble solvers.
+- **ObsErrorModelRamp** — OmB YAML example added to
+  `obsfunctions/ObsErrorModelRamp.rst`.
+
 ## Gotchas
 
 - Two separate Sphinx projects (`docs/` and `jedi-edu/`) — they share

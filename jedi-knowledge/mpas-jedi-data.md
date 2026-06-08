@@ -54,6 +54,12 @@ All under `testinput_tier_1/`:
   **single-precision** MPAS build. A double-precision MPAS build produces
   different numeric outputs; test `.ref` files in mpas-jedi match the
   single-precision run.
+- **Test dataset configuration corrected (2026-06, mpas-jedi-data#17):**
+  31 NetCDF files across `testinput_tier_1/384km/` and `testinput_tier_1/480km/`
+  were updated with a corrected configuration. Three new ensemble member files
+  were added (`480km/bg/ensemble/mem03/`, `mem04/`, `mem05/` — the
+  `mpasout.2018-04-15_00.00.00.nc` files). If you have scripts that
+  reference exact checksums or byte counts for these files, regenerate them.
 
 ## Further reading
 

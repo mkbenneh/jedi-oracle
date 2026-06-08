@@ -121,6 +121,19 @@ the default cookbook in YAML.
   the `_B` variant of this recipe (i.e. the inputs resolve to it rather
   than `_A` or `_C`), check that your result is numerically consistent
   with the fixed formula before comparing against old references.
+- **Virtual temperature formula fixed (2026-06, vader#362):**
+  `src/vader/recipes/AirVirtualTemperature_A.cc` — the formula was
+  incorrect. This was a real bug fix; any workflow that uses the
+  `AirVirtualTemperature_A` recipe should expect changed output values
+  and updated reference outputs (e.g. the fv3-jedi convertstate refs).
+- **Level ordering for wind-at-10m recipes (2026-06, vader#370):**
+  `EastwardWindAt10m.h/.cc`, `NorthwardWindAt10m.h/.cc`, and
+  `WindReductionFactorAt10m_A.cc` now handle the "are levels top-down?"
+  question explicitly. New test inputs added:
+  `test/testinput/recipe_uwind_at_10m_A_topdown.yaml` and
+  `recipe_vwind_at_10m_A_topdown.yaml`. If your model passes top-down
+  level ordering, the recipe now correctly interprets it (uses the
+  corresponding fixture `wind_at_10m_A_flipped.nc` from `jedi-model-data`).
 
 ## Further reading
 

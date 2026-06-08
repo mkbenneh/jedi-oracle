@@ -80,6 +80,15 @@ git submodules under `external/`, so SOCA pulls them along with itself.
   refs were regenerated for the QC change (apply QC to ensemble
   mean/modulated members, oops#3231). Rebuild and re-run
   `ctest -R soca_letkf` if your build predates this.
+- **FMS 2.1 compatibility (2026-06, soca#1245):** `src/soca/Geometry/soca_geom_mod.F90`
+  now uses `time_interp_external2_mod` instead of the deprecated
+  `time_interp_external_mod` for FMS 2.1 compatibility. Builds against
+  older FMS may need this reverted.
+- **Ensemble postproc zero-out variable list optional (2026-06, soca#1244):**
+  `src/mains/AnalysisPostproc.h` was updated so the zero-out variables
+  list does not have to be a subset of the increment variables. Experiments
+  using ensemble post-processing can now specify zero-out variables
+  independently.
 
 ## Further reading
 

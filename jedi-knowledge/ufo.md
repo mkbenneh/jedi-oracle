@@ -144,6 +144,22 @@ This is the largest and most actively-developed JEDI repo by file count.
 - **`ObsSpace::put_db` now requires `dimList` (2026-05):** all call
   sites in ufo were updated (ufo#4126); check local branches that call
   `put_db` directly.
+- **FinalCheck filter removed (2026-06, ufo#4137):** `src/ufo/filters/FinalCheck.cc/.h`
+  deleted; its functionality is now part of the QCmanager filter
+  (`src/ufo/QCmanager.cc/.h`). Update any YAML that references
+  `filter: Final Check` — use `QCmanager` instead. Also removed from
+  `instantiateObsFilterFactory.h`.
+- **LinearTimeInterpolate obsfunction added (2026-06, ufo#4049):**
+  `src/ufo/filters/obsfunctions/LinearTimeInterpolate.cc/.h` — piecewise
+  linear time interpolation/extrapolation between two obs records. Test YAML:
+  `test/testinput/unit_tests/filters/obsfunctions/function_lineartimeinterpolate.yaml`.
+  Test data is in `ufo-data` (two new `.nc4` files).
+- **CRTM coefficient path propagation (2026-06, ufo#4123):** the downloaded
+  CRTM coefficient path is now passed through to the relevant UFO modules so
+  they skip a redundant download. Works in concert with crtm#302.
+- **OSDF btfromradiance fix (2026-06, ufo#4157):** `Cal_SatBrightnessTempFromRad.cc`
+  and related variable-transform files fixed to work with OSDF-based
+  ObsSpaces.
 
 ## Further reading
 

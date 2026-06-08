@@ -52,6 +52,12 @@ having actually exercised the libraries.
   vader or saber and "tests still pass," check that
   `jedi-model-data` was found. A missing data repo means the test
   was never run.
+- **Wind product variables added (2026-06, jedi-model-data#14):**
+  `testinput_tier_1/vader/wind_at_10m_A.nc` was updated and a new file
+  `testinput_tier_1/vader/wind_at_10m_A_flipped.nc` was added to support
+  the top-down level ordering tests in vader (see vader#370). If your
+  vader test fixtures reference the old `wind_at_10m_A.nc` layout, pull
+  this data repo update first.
 
 ## Further reading
 

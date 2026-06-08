@@ -73,6 +73,11 @@ nonlinear code, kept current with TLM/AD pairs so JEDI's 4DVar (in
   — regenerating requires an external Tapenade install.
 - Embedded FV3 dycore copy can drift from upstream FV3-GFS — check
   before bumping FMS / cubed-sphere upstream.
+- **FMS 2025.2 compatibility (2026-06, fv3-jedi-lm#39):** Features not
+  present in FMS 2025.2 were removed across `src/dynamics/fv3jedi_lm_dynamics_mod.F90`
+  and nine `atmos_cubed_sphere/tools/*.F90` files (fv_mp_nlm_mod, fv_restart_nlm,
+  fv_treat_da_inc_nlm, and others). If you build against an older FMS, this
+  may require reverting or adapting those removals.
 
 ## Further reading
 

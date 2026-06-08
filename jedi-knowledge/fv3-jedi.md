@@ -95,6 +95,17 @@ for: `FV3_FORECAST_MODEL` (FV3CORE / GEOS / UFS), and
   `fv3-jedi-data` checkout).
 - 4DVar requires the linear model — `fv3-jedi-lm` must be built and
   found via `find_package(fv3jedilm)`.
+- **CRTM is now optional (2026-06, fv3-jedi#1506):** `CMakeLists.txt`
+  gates CRTM on an optional find, so fv3-jedi builds succeed without CRTM
+  present. If your configuration relied on CRTM being unconditionally
+  linked, add `find_package(crtm)` explicitly or pass `-DWITH_CRTM=ON`.
+- **FMS2-only IO (2026-06, fv3-jedi#1509):** remaining non-FMS2 I/O code
+  was removed from `src/fv3jedi/IO/FV3Restart/fv3jedi_io_fms2_mod.f90` and
+  the main drivers. Builds now require FMS ≥ 2025.2.
+- **Level ordering (2026-06, fv3-jedi#1510):** a "levels are top down?"
+  fix in `src/fv3jedi/ModelData/ModelData.cc/.h` affects convertstate
+  reference outputs (`test/testoutput/convertstate_*.ref` all updated).
+  If your branch has local ref-output edits, expect merge conflicts there.
 
 ## Further reading
 

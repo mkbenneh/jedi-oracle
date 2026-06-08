@@ -61,6 +61,11 @@ spinning up a full DA cycle.
     `skylab_monitor.py` — `map_center` keyword argument and other
     keyword-arg cleanup. If you call these directly with positional args,
     check that the call signature still matches.
+- **GOES ABI global synthetic file generator (2026-06, simobs#387):**
+  `src/simobs/generator/generate_goes_abi_file.py` (351 lines) added — a
+  script to write a synthetic `abi_global` GOES file. Use this when you
+  need synthetic ABI observations for testing or simulation without real
+  satellite data.
 
 ## Further reading
 

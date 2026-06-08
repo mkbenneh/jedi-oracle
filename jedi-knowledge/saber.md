@@ -160,6 +160,27 @@ response) without needing a full atmospheric model.
   `src/saber/interpolation/Geometry.cc` — missing halo points along
   the edges of limited domains were previously handled incorrectly
   (saber#1189). Affects FastLAM and regional-domain B configurations.
+- **FastLAM improvements (2026-06, saber#1248):** `src/saber/fastlam/`
+  — `FastLAM.cc/.h`, `LayerBase`, `LayerHalo`, `LayerRC`, `LayerSpec`
+  all updated. If you have local FastLAM patches, expect significant conflicts.
+- **SMV Interpolator blocks (2026-06, saber#1241):** New blocks
+  `GaussToCSWithSMV` and `SMVInterpWrapper` under `src/saber/interpolation/`,
+  and `GaussUVToGPWithSMV` under `src/saber/spectralb/`. Extensive new test
+  YAMLs added (`dirac_*_with_smv*.yaml`, `dirac_gaussuvtogp_with_smv.yaml`,
+  etc.) with matching `.ref` files under `test/testref/`.
+- **ResidualFields block (2026-06, saber#1244):** new
+  `src/saber/generic/ResidualFields.cc/.h` — a residual block for filtering
+  and a `DryMoistIncrOp` saber block (`src/saber/vader/DryMoistIncrOp.cc/.h`).
+- **Scaled ensemble perturbations (2026-06, saber#1240):** user-specified
+  scaling options in `src/saber/util/Randomization.cc/.h`. New test:
+  `test/testinput/process_perts_spectralb_from_gauss_perts_6.yaml` /
+  `test/testref/process_perts_spectralb_from_gauss_perts_6.ref`.
+- **Custom partitioner bugfixes (2026-06, saber#1250):** fixes in block-chain
+  partitioning logic in `src/saber/blocks/SaberEnsembleBlockChain` and
+  `SaberParametricBlockChain`.
+- **Torch/Python virtual environment unified (2026-06, saber#1207):**
+  the torchbalance block and Python tools now share the same virtual
+  environment; CI configuration in `.github/workflows/ci.yml` updated.
 
 ## Further reading
 

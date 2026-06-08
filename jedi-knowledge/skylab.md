@@ -75,6 +75,12 @@ directory in this oracle layout.
   assimilated (skylab#901). If your experiments skip this type, no
   action needed; if you were working around the old incomplete YAML,
   remove the workaround.
+- **Surface model updated in *_ldm.yaml obs files (2026-06, skylab#914):**
+  `obs/ufo/buoy_ldm.yaml`, `metar_ldm.yaml`, `scatwind.yaml`,
+  `ship_ldm.yaml`, and `synop_ldm.yaml` were all updated with a new
+  surface model specification. If your experiments include any of these
+  LDM observation types and you override these YAMLs locally, rebase
+  against the new surface model settings.
 
 ## Further reading
 
