@@ -24,8 +24,11 @@ platform for new algorithms before they are wired into operational models.
 - **Depended on by:** essentially everything else in the bundle — ufo,
   ioda, saber, vader, fv3-jedi, mpas-jedi, soca, coupling. They
   `find_package(oops 1.10.0 REQUIRED)`.
-- **Depends on:** eckit, fckit, atlas, MPI, NetCDF (with parallel),
-  Eigen3, Boost, LAPACK/MKL, optionally GPTL and nlohmann_json.
+- **Depends on:** eckit (≥1.24.4, MPI component), fckit (≥0.11.0),
+  atlas (≥0.35.0; `hic` is also required for atlas ≥0.39), MPI, NetCDF
+  (parallel build required), Eigen3, Boost, LAPACK/MKL, optionally GPTL
+  (profiling) and nlohmann_json (+schema validator, for JSON-schema
+  output).
 - **Build position:** built very early in the bundle (after
   eckit/fckit/atlas/jedicmake). See top-level `jedi-bundle/CMakeLists.txt`.
 
@@ -33,8 +36,12 @@ platform for new algorithms before they are wired into operational models.
 
 - `src/oops/` — the OOPS library proper (the `oops::` namespace).
   - `base/` — core abstract classes: `State`, `Increment`, `Model`,
-    `Geometry`, `Variables`, `ObsSpaceBase`, `Locations`,
-    `LinearModelBase`, etc.
+    `Geometry`, `Variables`/`Variable`, `ObsVariables`, `ObsSpaceBase`,
+    `Locations`, `LinearModelBase`, plus `FieldSet3D`/`FieldSet4D`/
+    `FieldSets`, ensemble inflation (`RTPP.h`, `RTPS.h`,
+    `InflationBase.h`), covariance bases
+    (`ModelSpaceCovarianceBase.h`, `EnsembleCovariance.h`,
+    `HybridCovariance.h`) and `instantiateCovarFactory.h`.
   - `interface/` — templated interface wrappers (`Geometry<MODEL>`,
     `State<MODEL>`, `LinearObsOperator<OBS>`, ...) that adapt
     model-specific implementations to the generic algorithms.
@@ -43,15 +50,24 @@ platform for new algorithms before they are wired into operational models.
     PCG, GMRES family, MINRES, Lanczos, saddle-point, LETKF/GETKF
     solvers), and as of 2026-05 the sequential ensemble solver framework
     (`SequentialEnsembleSolver.h`, `EAKFSolver.h`).
-  - `runs/` — top-level `Application` classes: `Variational`, `HofX3D`,
-    `HofX4D`, `Forecast`, `EnsembleApplication`, `LocalEnsembleDA`,
-    `ConvertState`, `EnsMeanAndVariance`, `GenEnsPertB`, `Test`. These
-    are what model executables instantiate.
+  - `runs/` — ~30 top-level `Application` classes: `Variational`,
+    `HofX3D`, `HofX4D`, `Forecast`, `AdjointForecast`,
+    `EnsembleApplication`, `TemplatedEnsembleApplication`,
+    `LocalEnsembleDA`, `EnsembleGETKFApplication`, `ControlPert`,
+    `ConvertState`, `ConvertIncrement`, `ConvertToStructuredGrid`,
+    `EnsMeanAndVariance`, `EnsRecenter`, `EnsembleInflation`,
+    `RescaleEnsPerts`, `GenEnsPertB`, `GenHybridLinearModelCoeffs`,
+    `HybridGain`, `TLMToolbox`, `SqrtOfVertLoc`,
+    `InterpolateStateBetweenModels`, `AddIncrement`, `DiffStates`,
+    `ExternalDFI`, `Test`. These are what model executables instantiate.
   - `generic/` — model-agnostic implementations: `PseudoModel`,
-    `IdentityModel`, `HybridLinearModel`, `Diffusion`,
-    `UnstructuredInterpolator`, `AtlasInterpolator`,
+    `IdentityModel`, `HybridLinearModel` + HTLM machinery
+    (`HtlmCalculator`, `HtlmEnsemble`, `HtlmRegularization`,
+    `HybridLinearModelCoeffs`, `SimpleLinearModel*`), `Diffusion`,
+    `VerticalLocEV`, `UnstructuredInterpolator`, `AtlasInterpolator`,
     `GlobalInterpolator`, `gc99`/`soar` correlation functions, FFT
-    helpers.
+    helpers, `instantiateModelFactory.h` /
+    `instantiateLinearModelFactory.h`.
   - `coupled/` — generic coupled-model infrastructure
     (`GeometryCoupled`, `ModelCoupled`, `StateCoupled`, `TraitCoupled`,
     ...).
@@ -61,6 +77,13 @@ platform for new algorithms before they are wired into operational models.
   - `mpi/` — MPI scope/communicator helpers.
   - `atlas/` — thin Atlas interpolator wrapper.
   - `contrib/` — DCMIP test initial conditions.
+- `src/test/` — the generic test framework (`TestEnvironment.h`,
+  `TestFixture.h`) and the per-interface test suites in
+  `src/test/interface/` (`Geometry.h`, `State.h`, `Increment.h`,
+  `Model.h`, `ObsSpace.h`, ...) that downstream model repos instantiate
+  with their `Traits` to validate an implementation. Sub-dirs mirror
+  `src/oops/` (`assimilation/`, `base/`, `coupled/`, `generic/`,
+  `mpi/`, `util/`, plus `testinput/`).
 - `l95/` — Lorenz-95 toy model (`l95/src/lorenz95/`,
   `l95/src/executables/`, `l95/test/`).
 - `qg/` — Quasi-Geostrophic shallow-water toy model. `qg/model/`,
@@ -106,9 +129,15 @@ platform for new algorithms before they are wired into operational models.
 - **Add a new minimizer** — drop a header in `src/oops/assimilation/`
   following `DRPCGMinimizer.h` / `PCGMinimizer.h`, register it in
   `Minimizer.h`'s factory.
-- **Wire YAML <-> code** — use `oops::Parameters` (see
-  `src/oops/util/parameters/`); JSON-schema is auto-emitted via
+- **Wire YAML <-> code** — `oops::Parameters`
+  (`src/oops/util/parameters/`) still exists, but new oops-core code
+  increasingly takes `eckit::Configuration` directly (see the Parameters
+  phase-out gotcha below). JSON-schema is auto-emitted via
   `cmake/oops_output_json_schema.cmake`.
+- **Validate a new model interface** — instantiate the generic
+  interface tests from `src/test/interface/` with your model's
+  `Traits` (every model repo's `test/` executables follow this
+  pattern).
 - **Time/date arithmetic** — `oops::DateTime` and `oops::Duration`
   (`src/oops/util/DateTime.h`, `Duration.h`).
 - **Logging** — `oops::Log::info()/debug()/test()/trace()` from
@@ -151,6 +180,23 @@ platform for new algorithms before they are wired into operational models.
 - **QC now applied to ensemble mean and modulated members in GETKF
   (2026-05):** `GETKFSolver.h` and `LocalEnsembleSolver.h` updated
   (oops#3231). Check test references if running l/getkf experiments.
+- **Parameters phase-out (2026-05):** oops#3296 removed the last
+  `Parameters` usage from the oops test suite; core oops code is
+  migrating from `oops::Parameters` subclasses toward plain
+  `eckit::Configuration`. The `util/parameters/` infrastructure is
+  still installed (downstream repos use it heavily), but don't model
+  new oops-core code on `Parameters`.
+- **GlobalInterpolator sparse comms (2026-06):**
+  `src/oops/generic/GlobalInterpolator.cc` now switches from
+  `allToAllv` to point-to-point sends when the communication graph is
+  sparse (oops#3271) — relevant when debugging interpolation MPI
+  behaviour or performance.
+- **`isRegional` safety check removed from `UnstructuredInterpolator`
+  (2026-06):** oops#3313 dropped the regional-domain guard from
+  `UnstructuredInterpolator` and the related helpers in
+  `util/FunctionSpaceHelpers`; combined with oops#3264 (extrapolation
+  outside regional domains) the interpolator no longer special-cases
+  regional grids.
 
 ## Further reading
 

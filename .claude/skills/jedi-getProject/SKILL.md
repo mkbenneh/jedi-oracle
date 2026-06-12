@@ -12,12 +12,16 @@ snapshots so the user doesn't have to re-explain what they're working on.
 
 ## Flow
 
-1. **Locate the memory directory.** The user's project-scoped memory lives at:
-   ```
-   ~/.claude/projects/-home-<username>-jedi-oracle/memory/
-   ```
-   Read `MEMORY.md` in that directory. It is the index — each line maps a
-   memory title to a filename and a one-line description.
+1. **Locate the memory directory.** The user's project-scoped memory lives
+   under `~/.claude/projects/<encoded-path>/memory/`, where
+   `<encoded-path>` is the absolute path of the current working directory
+   (the jedi-oracle checkout) with `/` replaced by `-` — e.g. a checkout at
+   `/home/someone/workspace/jedi-oracle` maps to
+   `-home-someone-workspace-jedi-oracle`. If the session's memory directory
+   isn't already known from context, list `~/.claude/projects/` and match
+   against the current working directory. Read `MEMORY.md` in that
+   directory. It is the index — each line maps a memory title to a filename
+   and a one-line description.
 
 2. **Filter for project memories.** Read each memory file that is referenced
    in `MEMORY.md`. Check the `type:` field in the frontmatter. Collect only

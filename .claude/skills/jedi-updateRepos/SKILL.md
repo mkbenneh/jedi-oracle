@@ -5,15 +5,17 @@ description: Pull develop on every cloned JEDI repo, summarize the diffs to what
 
 # /jedi-updateRepos
 
-Pull the latest `develop` on every cloned JEDI repo under the oracle root,
+Pull the latest `develop` on every cloned JEDI repo in the workspace,
 write a summary of what changed to `whatHasChanged.md`, and optionally
 refresh the per-repo knowledge briefs in `jedi-knowledge/` so the oracle
 stays current.
 
 ## Discovery
 
-A "cloned repo" is any of these directories that exists and is a git
-working tree:
+Resolve the workspace root per CLAUDE.md: `../` if `../jedi-bundle/`
+exists (sibling layout), else the oracle repo root (legacy nested
+checkouts). A "cloned repo" is any of these directories — relative to the
+workspace root — that exists and is a git working tree:
 
 - `jedi-bundle/` itself
 - `jedi-bundle/<repo>/` for each sub-repo cloned by `/jedi-getCode`

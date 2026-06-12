@@ -82,8 +82,9 @@ needed if results look incomplete.
      brief for the repo the issue lives in, plus `jedi-knowledge/jedi-tips.md`
      and `jedi-knowledge/coding-practices.md` per CLAUDE.md guidance.
    - **Cloned source** — if the issue mentions files, functions, error
-     messages, or stack traces, grep the cloned repos under
-     `jedi-bundle/`, `jedi-docs/`, `jedi-tools/`, and `jedi-workflow/`
+     messages, or stack traces, grep the cloned repos in the workspace
+     (`jedi-bundle/`, `jedi-docs/`, `jedi-tools/`, `jedi-workflow/`,
+     relative to the workspace root per CLAUDE.md — normally `../`)
      for the relevant symbols. Read the actual code, don't just trust
      the brief.
    - **Linked PRs / commits** — `gh pr view <num> --repo <owner/repo>`

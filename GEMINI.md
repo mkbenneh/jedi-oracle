@@ -5,7 +5,7 @@
 
 This repository **does not** contain the JEDI source code itself. Instead, it serves as a central oracle containing documentation, instructions, team practices, and workflows. It is intended for an AI assistant to read this context and answer questions about the various JEDI repositories, understand how they fit together, and assist with workflows (like skylab, ewok, simobs, r2d2).
 
-When JEDI source code repositories (like `jedi-bundle`, `jedi-docs`, `jedi-tools`, `jedi-workflow`) are needed, they are typically cloned into the root of this workspace (but are gitignored).
+When JEDI source code repositories (like `jedi-bundle`, `jedi-docs`, `jedi-tools`, `jedi-workflow`) are needed, they are cloned **alongside** this repo — i.e. into the parent workspace directory (`../jedi-bundle`, `../jedi-docs`, etc.). Older checkouts cloned them inside this repo (gitignored); when looking for cloned code, check `../<repo>` first and fall back to `./<repo>`.
 
 ## Directory Overview
 - **`jedi-knowledge/`**: The core knowledge base. It contains markdown briefs for each JEDI repository (e.g., `oops.md`, `ufo.md`, `saber.md`, `vader.md`, `ioda.md`, `fv3-jedi.md`, `soca.md`, `mpas-jedi.md`), shared team tips (`jedi-tips.md`), workflow overviews (`workflow.md`, `skylab.md`, `ewok.md`), and coding practices (`coding-practices.md`).
@@ -26,7 +26,7 @@ When working in this directory, you should act as the **JEDI Oracle**.
   - Read `jedi-knowledge/<repo>.md` to understand specific components.
   - Always read `jedi-knowledge/jedi-tips.md` before answering questions about building, testing, or workflows.
   - Read `jedi-knowledge/workflow.md` to understand the skylab/ewok/simobs/r2d2 integration.
-- **Working with Source Code:** If JEDI repositories (like `jedi-bundle`, `jedi-tools`, etc.) are cloned into this directory, their source code is more authoritative than the cached knowledge briefs. Always verify paths, names, and logic against the cloned code before making specific recommendations.
+- **Working with Source Code:** If JEDI repositories (like `jedi-bundle`, `jedi-tools`, etc.) are cloned in the workspace (normally `../<repo>`, or `./<repo>` in legacy checkouts), their source code is more authoritative than the cached knowledge briefs. Always verify paths, names, and logic against the cloned code before making specific recommendations.
 - **Citations:** When answering questions, cite the specific knowledge file (e.g., `jedi-knowledge/oops.md`) or the source code file path so the user can dig deeper.
 
 ## Development Conventions & Coding Practices
@@ -39,4 +39,4 @@ Before planning or making any code changes in the JEDI ecosystem, you **must** r
 - **Style norms:** C++ uses `clang-format` and `cpplint.py` (100-character line limit, Google style). Python follows PEP 8. Fortran prefers F2003+ with explicit intent and `implicit none`.
 
 ## Initialization
-If the user is starting a fresh session and the source repositories are not yet cloned in the root, you can offer to clone them following the logic originally laid out in `CLAUDE.md` (e.g., `jedi-bundle`, `jedi-docs`, `jedi-tools`, `jedi-workflow`).
+If the user is starting a fresh session and the source repositories are not yet cloned in the workspace (check `../` first, then `./` for legacy checkouts), you can offer to clone them into the parent workspace directory following the logic laid out in `CLAUDE.md` (e.g., `jedi-bundle`, `jedi-docs`, `jedi-tools`, `jedi-workflow`).

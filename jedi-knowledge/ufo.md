@@ -8,101 +8,142 @@
 
 UFO provides JEDI's `ObsTraits` and the bulk of observation-space code:
 
-- **Forward operators** (`operators/`) — radiance (CRTM, RTTOV), GNSS-RO,
-  ground-based GNSS, sondes/aircraft/ATMS/AMSU-A/IASI/CrIS/AIRS/AHI/ABI/
-  scatwind/SST/aerosol/AOD/ozone/cloud-top/etc.
-- **QC filters** (`filters/`) — gross checks, background checks, bias
-  predictors, history of value rejections.
-- **Obs functions** (`filters/obsfunctions/`) — includes (2026-05)
-  `CircularDifference` (angular difference for wind directions),
-  `TimeBinner` (time-window binning), `ProfileVerticalSmoothing`
-  (vertical smoothing along a profile), and `Statistic` (global
-  statistics across all MPI ranks).
+- **Forward operators** (`operators/`) — organized by operator *type*, not
+  by instrument: generic interpolators (`vertinterp/`, `identity/`,
+  `atmvertinterplay/`), radiance backends (`crtm/`, `rttov/`), GNSS-RO
+  (`gnssro/`), ground-based GNSS (`groundgnss/`), radar
+  (`radardopplerwind/`, `radarradialvelocity/`, `radarreflectivity/`),
+  marine (`marine/`), aerosols/composition (`aerosols/`, `insitupm/`),
+  composites and wrappers (`compositeoper/`, `categoricaloper/`,
+  `timeoper/`, `product/`, `logarithm/`, `pathsum/`), and more.
+  Conventional obs types (sondes, aircraft, surface) are served by the
+  generic operators plus YAML config.
+- **QC filters** (`filters/`) — background/bounds/domain checks, thinning
+  (Gaussian, Poisson-disk, temporal, duplicate), Met Office buddy and
+  track checks, profile checks, history checks, variable assignment, etc.
+- **Obs functions** (`filters/obsfunctions/`) — ~200 files of derived
+  quantities usable in filter `where`/assign expressions. Recent
+  additions (2026-05/06): `CircularDifference`, `TimeBinner`,
+  `ProfileVerticalSmoothing`, `Statistic` (global stats across MPI
+  ranks), `LinearTimeInterpolate`.
 - **Bias correction** (`predictors/` + `ObsBias*`) — the variational
   bias-correction infrastructure.
 - **Variable transforms** (`variabletransforms/`) — observation-side
   variable conversions parallel to VADER's model-side ones.
-- **Profile QC** (`profile/`), **sampled locations**
-  (`SampledLocations*`), **error models** (`errors/`), **field-of-view**
-  (`fov/`), **super-obing** (`superob/`).
+- **Profile machinery** (`profile/`) — vertical-profile QC plus the
+  `ObsProfileAverage` operator and averaging utilities.
+- Also: **sampled locations** (`SampledLocations*`), **error models**
+  (`errors/`), **field-of-view** (`fov/`), **super-obing** (`superob/`),
+  **obs localization** (`obslocalization/`).
 
 This is the largest and most actively-developed JEDI repo by file count.
 
 ## How it fits into the bundle
 
-- **Depends on:** `oops`, `ioda`, `crtm` (and/or `rttov` if
-  `BUILD_RTTOV=ON`), atlas, eckit, fckit. Optional: `ropp-ufo` for
-  GNSS-RO via ROPP.
+- **Depends on:** `oops`, `ioda`, atlas, eckit, fckit. Optional radiance
+  backends: `crtm` (`find_package(crtm 2.4.x)`, v3 also supported) and/or
+  `rttov` (v14 preferred, v12.3 fallback). Optional: `gsw` (enables the
+  marine observation operators), `ropp-ufo` (GNSS-RO bending angle via
+  ROPP; `BUILD_ROPP=ON` in the bundle), `oasim` (`BUILD_OASIM=ON`).
 - **Depended on by:** every model wrapper (fv3-jedi, mpas-jedi, soca,
   coupling) that runs DA against observations, plus `simobs`.
-- **Build position:** after oops + ioda + crtm.
+- **Build position:** after oops + ioda + crtm (+ gsw).
 
 ## Key directories
 
 - `src/ufo/` — the UFO library.
-  - Top-level: `ObsTraits.h`, `ObsOperator.{h,cc}`,
-    `LinearObsOperator.{h,cc}`, `GeoVaLs.{h,cc}`, `ObsFilters.{h,cc}`,
-    `ObsBias*`, `ObsDiagnostics.{h,cc}`, `SampledLocations.{h,cc}`.
-  - `operators/` — forward operators, organized by instrument /
-    family (e.g. `radiosonde/`, `aircraft/`, `crtm/`, `rttov/`,
-    `gnssro/`, `sfc/`, `atmsfclnda/`, …).
-  - `filters/` — QC filters (Gaussian thinning, gross check, bias-
-    threshold, derivative checks, history, …).
-  - `predictors/` — bias-correction predictors (constant,
-    legendre/laguerre, lapse-rate, satellite scan position, etc.).
+  - Top-level: `ObsTraits.h`, `ObsOperator.{h,cc}` /
+    `ObsOperatorBase.{h,cc}`, `LinearObsOperator{,Base}.{h,cc}`,
+    `GeoVaLs.{h,cc}` (+ `GeoVaLs.interface.F90`), `ObsFilter{,s,Base}.*`,
+    `QCmanager.{h,cc}`, `ObsBias*` (incl. `ObsBiasCovariance`,
+    `ObsBiasIncrement`, `ObsBiasPreconditioner`,
+    `(Linear)ObsBiasOperator`), `ObsDiagnostics.{h,cc}`,
+    `SampledLocations.{h,cc}`, `AnalyticInit*`.
+  - `operators/` — forward operators by family (see list above; each
+    family dir holds `Obs<Name>.{h,cc}` + `Obs<Name>TLAD.{h,cc}` and
+    often Fortran `*.interface.F90` / `ufo_*_mod.F90` backends).
+    `operators/gnssro/` subdivides further (`BendMetOffice/`, `BndNBAM/`,
+    `BndROPP1D/`, `BndROPP2D/`, `RefMetOffice/`, `RefNCEP/`, `QC/`).
+  - `filters/` — QC filters, plus `actions/`, `obsfunctions/`,
+    `gnssroonedvarcheck/`, `refractivityonedvarcheck/`,
+    `rttovonedvarcheck/` subdirs.
+  - `predictors/` — bias-correction predictors (`Constant`, `LapseRate`,
+    `Legendre`, `ScanAngle`, `OrbitalAngle`, `CloudLiquidWater`,
+    `Emissivity`, `Thickness`, `InterpolateDataFromFile`, …).
   - `variabletransforms/` — observation-space variable conversions.
-  - `obslocalization/` — observation localization for EnKF/LETKF.
-  - `errors/` — observation-error models.
-  - `profile/` — vertical-profile QC machinery.
-  - `superob/` — observation thinning / super-obing.
-  - `fov/` — field-of-view geometry.
-  - `basis/`, `utils/` — supporting infrastructure.
+  - `obslocalization/` — observation localization for EnKF/LETKF
+    (GC99, SOAR, vertical).
+  - `errors/` — observation-error models (`ObsErrorDiagonal`,
+    `ObsErrorDiagonalInvGamma`, `ObsErrorCrossVarCov`,
+    `ObsErrorWithinGroupCov`, `ObsErrorDiffusion`,
+    `ObsErrorReconditioner`).
+  - `profile/` — vertical-profile QC machinery + `ObsProfileAverage`
+    operator.
+  - `superob/` — super-obing (`SuperObBase`, `SuperObMeanO`,
+    `SuperObMeanOmB`, `SuperObRadar`, `SuperObRadarTemplate`).
+  - `fov/` — field-of-view geometry (sample/reduce over FOV).
+  - `basis/`, `utils/` — supporting infrastructure (`utils/` has
+    distance calculators, interpolators, `OceanConversions/`, …).
   - `instantiateObsFilterFactory.h`, `instantiateObsLocFactory.h` —
-    factory registration callers.
-- `test/` — extensive test suite. `test/testinput/` includes
-  `instrumentTests/` and `unit_tests/` subtrees.
-- `tools/` — helper scripts.
+    factory registration callers for filters and obs localization.
+    (There is **no** central operator factory header — operators
+    self-register; see Common tasks.)
+- `test/` — extensive test suite. `test/mains/` holds the `Test*.cc`
+  drivers, `test/ufo/` the test framework headers, `test/testinput/`
+  includes `instrumentTests/` (per-instrument: Sonde, Aircraft_obs,
+  abi, …) and `unit_tests/` subtrees, `test/testref/` the references.
+- `tools/` — `ufo_cpplint.py` (style checker).
 - `docs/` — design notes, including `docs/organization.md` (read this
   for an overview of UFO's internal layout).
-- `resources/` — packaged config/resource files.
+- `resources/` — packaged config/resource files (`namemap`).
 
 ## Key entry points
 
 - `src/ufo/ObsTraits.h` — the `UfoTraits` struct that defines the OBS
   Traits implementation.
-- `src/ufo/ObsOperator.{h,cc}` — the OOPS-facing
-  `oops::ObsOperatorBase` implementation.
+- `src/ufo/ObsOperator.{h,cc}` — the OOPS-facing obs operator wrapper;
+  `ObsOperatorBase.{h,cc}` is what concrete operators derive from.
 - `src/ufo/LinearObsOperator.{h,cc}` — TL/AD wrapper.
 - `src/ufo/GeoVaLs.{h,cc}` — model values interpolated to observation
   locations (the bridge between model and obs space).
-- `src/ufo/ObsFilters.{h,cc}` — pipeline of QC filters.
+- `src/ufo/ObsFilters.{h,cc}` — pipeline of QC filters;
+  `src/ufo/QCmanager.{h,cc}` — bookkeeping filter that also absorbed the
+  former FinalCheck.
 - `src/ufo/ObsBias*` — variational bias correction.
 - `src/ufo/operators/<family>/` — pick one to learn the operator
-  pattern (e.g. `operators/identity/` is the simplest).
+  pattern (`operators/identity/` is the simplest).
 - `docs/organization.md` — narrative orientation to the code layout.
 
 ## Common tasks
 
 - **Run the UFO test suite** — `ctest -L ufo` in the build tree.
 - **Add a new observation operator** —
-  1. Create `src/ufo/operators/<family>/<MyOp>.{h,cc}` deriving from
-     `ObsOperatorBase` (and a TL/AD partner from
+  1. Create `src/ufo/operators/<family>/Obs<MyOp>.{h,cc}` deriving from
+     `ObsOperatorBase` (and a TL/AD partner `Obs<MyOp>TLAD` from
      `LinearObsOperatorBase`).
-  2. Register in `src/ufo/operators/<family>/CMakeLists.txt` and
-     `instantiateObsOperatorFactory.h`.
+  2. Register with a static maker in the `.cc`:
+     `static ObsOperatorMaker<ObsMyOp> maker_("MyOp");` (and
+     `LinearObsOperatorMaker` for the TLAD). Add the files to the
+     family's `CMakeLists.txt`.
   3. Add a test YAML and reference output under `test/testinput/` and
-     `test/testref/`.
-- **Add a new QC filter** — derive from `ObsFilterBase`, register via
-  `instantiateObsFilterFactory.h`, add a test.
+     `test/testref/` (data fixtures go to `ufo-data`).
+- **Add a new QC filter** — derive from `FilterBase` /
+  `ObsFilterBase`, register via `instantiateObsFilterFactory.h`, add a
+  test.
+- **Add an obs function** — new class in `filters/obsfunctions/`,
+  self-registers via `ObsFunctionMaker`; test YAMLs live under
+  `test/testinput/unit_tests/filters/obsfunctions/`.
 - **Use CRTM vs RTTOV** — selected via the YAML
-  `obs operators[i].name` field (`CRTM` vs `RTTOV`); both backends live
+  `obs operator: name` field (`CRTM` vs `RTTOV`); both backends live
   side-by-side under `operators/`.
 
 ## Gotchas
 
-- Operator and filter factories register via global initializers — if
-  a new file isn't picked up at runtime, double-check the
-  `instantiate*Factory.h` includes.
+- Filter and obs-localization factories register via
+  `instantiate*Factory.h`; operators and obs functions register via
+  static makers in their own `.cc`. If a new class isn't found at
+  runtime, check the right mechanism for its kind (and that the file is
+  in CMakeLists).
 - `GeoVaLs` variable names must match what VADER (model side) and
   the operator (obs side) agree on — name drift is a common source of
   silent zero outputs.
@@ -110,12 +151,6 @@ This is the largest and most actively-developed JEDI repo by file count.
   coefficient files at runtime; missing or version-mismatched
   coefficients produce confusing errors.
 - The repo is large; expect non-trivial build times. `ccache` helps.
-- `ImpactHeightCheck.h` — the superrefraction flag was renamed/changed
-  in develop (2026-04). If you have a local branch touching GNSS-RO,
-  check for conflicts with this change.
-- `CloudDetectMinResidualIR.cc` had ~15 lines removed in the same round
-  of warning cleanup. If merging from an older state, expect a conflict
-  in that file.
 - **QC flag API change (2026-05):** The QC flag `ObsDataVector` is now
   passed as a reference rather than a shared pointer throughout the filter
   stack (ufo#4112). All ~150 filter classes were updated; any local
@@ -130,13 +165,14 @@ This is the largest and most actively-developed JEDI repo by file count.
   `src/ufo/filters/DuplicateThinning.{h,cc}` (ufo#4086). Registered in
   `instantiateObsFilterFactory.h`. Use in YAML as
   `filter: Duplicate Thinning`.
-- **New `ProfileVerticalSmoothing` obs function (2026-05):**
-  `src/ufo/filters/obsfunctions/ProfileVerticalSmoothing.{h,cc}`
-  (ufo#4032). Documented in jedi-docs at
-  `docs/jedi-components/ufo/qcfilters/obsfunctions/ProfileVerticalSmoothing.rst`.
-- **New `Statistic` obs function (2026-05):**
-  `src/ufo/filters/obsfunctions/Statistic.{h,cc}` (ufo#4091). Computes
-  global statistics (mean, RMS, …) across all MPI ranks.
+- **New obs functions (2026-05):** `ProfileVerticalSmoothing` (ufo#4032),
+  `Statistic` (ufo#4091, global stats across MPI ranks), `TimeBinner`
+  (ufo#4048), `CircularDifference` (ufo#4055-era) — all under
+  `src/ufo/filters/obsfunctions/`.
+- **Inverse-Gamma obs error (2026-05, ufo#4024):**
+  `src/ufo/errors/ObsErrorDiagonalInvGamma.{h,cc}` plus an
+  inverse-gamma effective-stddev statistic in the `EnsembleStatistics`
+  filter.
 - **`ObsErrorDiffusion` mesh moved to `update` method (2026-05):**
   Mesh construction previously done at construction is now deferred to
   the `update` call (ufo#4129). Local branches overriding
@@ -156,10 +192,16 @@ This is the largest and most actively-developed JEDI repo by file count.
   Test data is in `ufo-data` (two new `.nc4` files).
 - **CRTM coefficient path propagation (2026-06, ufo#4123):** the downloaded
   CRTM coefficient path is now passed through to the relevant UFO modules so
-  they skip a redundant download. Works in concert with crtm#302.
+  they skip a redundant download. Works in concert with crtm#302 (CRTM
+  exports a `CRTM_TESTFILES_PATH` global property).
 - **OSDF btfromradiance fix (2026-06, ufo#4157):** `Cal_SatBrightnessTempFromRad.cc`
   and related variable-transform files fixed to work with OSDF-based
   ObsSpaces.
+- **VariableAssignment type checking (2026-06, ufo#4170):**
+  `src/ufo/filters/VariableAssignment.cc` now checks the data type of the
+  assigned variable and throws a clearer error (including the variable
+  name) on mismatch. YAMLs that silently relied on type coercion may now
+  fail with an explicit exception.
 
 ## Further reading
 
@@ -167,5 +209,6 @@ This is the largest and most actively-developed JEDI repo by file count.
 - jedi-docs.jcsda.org → JEDI Components → UFO.
 - Related briefs: `jedi-knowledge/oops.md`, `jedi-knowledge/ioda.md`,
   `jedi-knowledge/crtm.md`, `jedi-knowledge/rttov.md`,
-  `jedi-knowledge/ropp-ufo.md`, `jedi-knowledge/ufo-data.md`,
-  `jedi-knowledge/iodaconv.md`, `jedi-knowledge/jedi-bundle.md`.
+  `jedi-knowledge/ropp-ufo.md`, `jedi-knowledge/gsw.md`,
+  `jedi-knowledge/ufo-data.md`, `jedi-knowledge/iodaconv.md`,
+  `jedi-knowledge/jedi-bundle.md`.

@@ -17,7 +17,9 @@ sensor-agnostic.
 CRTM is developed independently of JEDI (originally JCSDA's standalone
 radiative-transfer library), and JEDI consumes it as an external Fortran
 dependency. UFO's `RTTOV` and `CRTM` observation operators are alternative
-radiance forward models; this repo provides the CRTM side.
+radiance forward models; this repo provides the CRTM side. Current
+version on develop: **3.1.3** (`VERSION.cmake`; REL-3.1.3 added IFX
+compiler support).
 
 ## How it fits into the bundle
 
@@ -25,7 +27,8 @@ radiance forward models; this repo provides the CRTM side.
   optional OpenMP. No JEDI deps — CRTM does not link against
   oops/eckit/atlas.
 - **Depended on by:** `ufo` (when built with CRTM enabled). UFO uses
-  `find_package(crtm ...)` and links its CRTM observation operator
+  `find_package(crtm 2.4.x)` (and special-cases
+  `crtm_VERSION >= 3.0.0`), linking its CRTM observation operator
   against `libcrtm`.
 - **Build position:** can be built early; has no JEDI prerequisites. In
   the bundle CRTM builds before UFO.
@@ -40,26 +43,30 @@ radiance forward models; this repo provides the CRTM side.
     `CRTM_K_Matrix_Module.f90`, `CRTM_Parameters.f90`.
   - `Atmosphere/` — atmospheric state, hypsometric, RH, Cloud, Aerosol.
   - `Surface/`, `SfcOptics/`, `SensorInfo/`, `InstrumentInfo/`,
-    `ChannelInfo/`, `GeometryInfo/`, `Options/`.
+    `ChannelInfo/`, `GeometryInfo/`, `Options/`, `Ancillary/`.
   - `AtmAbsorption/`, `AtmOptics/`, `AtmScatter/`, `Source_Functions/`,
     `RTSolution/`, `Interpolation/`.
   - `Coefficients/` — coefficient I/O modules (`CRTM_SpcCoeff.f90`,
     `CRTM_TauCoeff.f90`, `CRTM_AerosolCoeff.f90`,
     `CRTM_CloudCoeff.f90`, plus per-sensor IR/MW/VIS variants and
-    `ACCoeff`, `BeCoeff`, `EmisCoeff`, `FitCoeff`, `NLTECoeff` subdirs).
+    `ACCoeff/`, `BeCoeff/`, `CloudCoeff/`, `EmisCoeff/`, `FitCoeff/`,
+    `NLTECoeff/`, `SpcCoeff/`, `TauCoeff/` subdirs).
   - `Zeeman/`, `NLTE/`, `AntennaCorrection/`, `Statistics/`,
-    `Validation/`, `TauProd/`, `TauRegress/`, `Test_Utility/`,
+    `CRTM_Utility/`, `TauProd/`, `TauRegress/`, `Test_Utility/`,
     `Utility/`, `User_Code/`.
-- `test/` — gtest-style ctest harness.
+- `test/` — ctest harness.
   - `test/mains/application/` — `check_crtm.F90`,
     `check_crtm_random_profiles.F90`, `check_tropics.f90`.
   - `test/mains/regression/` — `forward/`, `tangent_linear/`,
-    `adjoint/`, `k_matrix/` regression tests.
-  - `test/mains/unit/` — unit tests.
+    `adjoint/`, `k_matrix/` regression tests (+ shared `incsrc/`).
+  - `test/mains/unit/` — unit tests (`Unit_Test/`, `input_output/`).
   - `test/crtm_data_downloader.py` — pulls coefficient binaries.
-  - `test/CMakeLists.txt` — wires in coefficient symlinks and
-    ADD_CRTM_UNIT_TEST helper.
+  - `test/CMakeLists.txt` — coefficient download/symlink logic; exports
+    the global CMake property `CRTM_TESTFILES_PATH` so downstream
+    projects (UFO) can find the downloaded coefficients.
 - `cmake/` — compiler flag files per compiler.
+- `CRTM_V30_TEST/` — legacy v3.0-era test sources kept at top level;
+  not part of the CMake test suite.
 - `Get_CRTM_Binary_Files.sh` — downloads the `fix/` coefficient tarball
   from UCAR's GDEX (legacy / standalone use).
 - `Set_CRTM_Environment.sh` — env helpers for standalone builds.
@@ -90,8 +97,11 @@ radiance forward models; this repo provides the CRTM side.
 - **Build inside the JEDI bundle** — built automatically; the `crtm`
   target is consumed by UFO via `find_package(crtm)`.
 - **Override the coefficient location** — set
-  `-DFIX_FILE_PATH=<path>` at configure, or `CRTM_TEST_ROOT` env var
-  for the tests (see `test/CMakeLists.txt`).
+  `-DFIX_FILE_PATH=<path>` at configure (defaults to
+  `$LOCAL_PATH_JEDI_TESTFILES/fix` if that env var is set, else
+  `<src>/fix`). If the path doesn't exist, configure downloads the
+  `fix_REL-3.1.2.0` tarball into `<src>/test-data-release/` (or uses the
+  `CRTM_BINARY_FILES_TARBALL` env var if set). See `test/CMakeLists.txt`.
 - **Add or update a sensor** — drop new SpcCoeff / TauCoeff / EmisCoeff
   binaries into the coefficient dir; CRTM is sensor-data driven and
   library code does not need changes for new sensors using existing
@@ -124,10 +134,14 @@ radiance forward models; this repo provides the CRTM side.
   ignore the `Makefile` artifacts.
 - **Coefficient download path changed (2026-06, crtm#302):** The directory
   where CRTM downloads its coefficient files was decoupled from UFO's
-  expected path. `test/CMakeLists.txt` now sets a CMake property so UFO can
-  discover the downloaded coefficient path without hard-coding the UFO
-  subdirectory. If you have custom logic that assumed coefficients land under
-  the UFO subtree, update it to use the CRTM-exported path property instead.
+  expected path. `test/CMakeLists.txt` now sets the global CMake property
+  `CRTM_TESTFILES_PATH` so UFO can discover the downloaded coefficient path
+  without hard-coding the UFO subdirectory (paired with ufo#4123). If you
+  have custom logic that assumed coefficients land under the UFO subtree,
+  update it to read this property instead.
+- **Unit-test tag selector added (2026-05, crtm#301):** unit tests carry a
+  ctest label/tag selector; `test_check_crtm_random` was removed from the
+  default CI tier ("tier2"-labeled) to cut CI time.
 
 ## Further reading
 

@@ -37,9 +37,10 @@ response) without needing a full atmospheric model.
     `ProcessPerts.h`, plus the `instantiateCovarFactory.h` /
     `instantiateLocalizationFactory.h` that downstream code calls to
     register blocks.
-  - `blocks/` — the block-chain framework: `SaberOuterBlockBase`,
-    `SaberCentralBlockBase`, `SaberOuterBlockChain`,
-    `SaberEnsembleBlockChain`, `SaberHybridBlockChain`,
+  - `blocks/` — the block-chain framework: `SaberBlockChainBase`,
+    `SaberOuterBlockBase`, `SaberCentralBlockBase`,
+    `SaberBlockParametersBase`, `SaberOuterBlockChain`,
+    `SaberEnsembleBlockChain`, `SaberHybridBlockChain` (header-only),
     `SaberParametricBlockChain`, `instantiateBlockChainFactory.h`.
   - `bump/` — the BUMP library (Background error on an Unstructured
     Mesh, Benjamin Ménétrier). Core blocks: `NICAS` (correlation),
@@ -48,21 +49,33 @@ response) without needing a full atmospheric model.
   - `spectralb/` — spectral B-matrix blocks: `SpectralCovariance`,
     `SpectralCorrelation`, `SqrtOfSpectralCorrelation`,
     `SqrtOfSpectralCovariance`, `SpectralToGauss`, `SpectralToSpectral`,
-    `SpectralAnalyticalCorrelation`, `GaussUVToGP`, `HydrostaticPressure`.
-  - `fastlam/` — FastLAM (limited-area model fast B), with halo and
-    spectral layer variants (requires FFTW or ECTRANS).
-  - `bifourier/` — bi-Fourier transforms for LAM grids.
+    `SpectralAnalyticalCorrelation`, `SpectralAnalyticalFilter`,
+    `GaussUVToGP`, `GaussUVToGPWithSMV`, `HydrostaticPressure(m1)`.
+  - `fastlam/` — FastLAM (limited-area model fast B): `FastLAM` plus
+    `LayerBase`/`LayerHalo`/`LayerRC`/`LayerSpec` variants (requires
+    FFTW or ECTRANS).
+  - `bifourier/` — bi-Fourier transforms for LAM grids:
+    `BifourierCovariance`/`Balance`/`GridToSpectral`, AROME-specific
+    blocks (`BifourierAromeBalance`, `BifourierAromeCovariance`,
+    legacy interface), FFTW and ECTRANS transform backends.
   - `diffusion/` — diffusion-based correlations (`Diffusion`,
     `DiffusionFilter`, `DiffusionImpl`).
-  - `interpolation/` — Atlas interp wrappers, `GaussToCS` (Gaussian to
-    cubed-sphere), `Rescaling`, `VertProj`, `VectorFieldMetadata`.
+  - `interpolation/` — `AtlasInterpWrapper`, `Interpolation`,
+    `GaussToCS` (Gaussian to cubed-sphere), `GaussToCSWithSMV`,
+    `SMVInterpWrapper`, `Rescaling`, `VertProj`, `VectorFieldMetadata`,
+    `Geometry`.
   - `gsi/` — GSI-bec interface (`GSIBlockChain`, `covariance/`, `grid/`,
     `utils/`); requires `gsibec`.
-  - `vader/` — saber blocks that wrap VADER variable changes.
+  - `vader/` — VADER-backed blocks: the generic `VaderBlock` wrapper
+    (with its own `DefaultCookbook.h`) plus a large family of
+    moisture/balance blocks (`MoistIncrOp`, `SuperMoistIncrOp`,
+    `DryMoistIncrOp`, `MoistureControl`, `HydroBal(m1)`,
+    `DryAirDensity`, `GpToHp(m1)`, `HpToHexner`, `AirTemperature`,
+    ...) and `WriteVariances` diagnostics.
   - `coupled/` — `CoupledErrorCovariance` for multi-component coupled DA.
   - `generic/` — `ID` (identity), `StdDev`, `DuplicateVariables`,
-    `OrographicInterp`, `ShadowLevels`, `VertLoc`, `VertLocInterp`,
-    `WriteFields`.
+    `OrographicInterp`, `ResidualFields`, `ShadowLevels`, `VertLoc`,
+    `VertLocInterp`, `WriteFields`.
   - `torchbalance/` — Torch-based learned balance operator (optional,
     requires Torch_ROOT).
   - `util/` — calibration, binned-fieldset helpers, NetCDF/coordinate
@@ -70,7 +83,8 @@ response) without needing a full atmospheric model.
 - `quench/` — toy model.
   - `quench/src/` — `Geometry`, `State`, `Increment`, `Fields`,
     `Covariance`, `VariableChange`, `LinearVariableChange`,
-    `Interpolation`, `Traits.h`.
+    `Interpolation`, `ModelData`, `Traits.h`, plus a `FieldsIO/`
+    subsystem (default and Gmsh backends).
   - `quench/mains/` — `quenchErrorCovarianceToolbox.cc`,
     `quenchConvertState.cc`, `quenchProcessPerts.cc`,
     `quenchSubCommErrorCovarianceToolbox.cc`,
@@ -100,7 +114,7 @@ response) without needing a full atmospheric model.
 - `src/saber/blocks/SaberOuterBlockBase.h`, `SaberCentralBlockBase.h` —
   base classes for adding a new block.
 - `src/saber/blocks/SaberOuterBlockChain.cc`,
-  `SaberParametricBlockChain.cc`, `SaberHybridBlockChain.cc` — how
+  `SaberParametricBlockChain.cc`, `SaberHybridBlockChain.h` — how
   blocks compose into a full B.
 - `src/saber/bump/BUMP.h`, `NICAS.h`, `StdDev.h` — the most widely used
   parametric covariance blocks.
@@ -119,10 +133,13 @@ response) without needing a full atmospheric model.
   `quenchErrorCovarianceToolbox <yaml>`. Tutorial YAMLs are in
   `docs/yaml/`.
 - **Add a new outer block** — derive from `SaberOuterBlockBase`,
-  register via `SABER_OUTER_BLOCK_REGISTRY` macro, drop sources into a
-  subdir of `src/saber/`, list them in that subdir's `CMakeLists.txt`.
+  register with a static maker, e.g.
+  `static SaberOuterBlockMaker<MyBlock> maker_("my block name");`
+  (template: `src/saber/generic/ID.cc`), drop sources into a subdir of
+  `src/saber/`, list them in that subdir's `CMakeLists.txt`.
 - **Add a new central block** — same pattern with
-  `SaberCentralBlockBase`.
+  `SaberCentralBlockBase` and `SaberCentralBlockMaker<>` (template:
+  `src/saber/spectralb/SpectralCovariance.cc`).
 - **Plot dirac responses** — `tools/saber_plot.py` /
   `tools/saber_plot/`.
 - **Check covariance vs reference** —
@@ -142,8 +159,10 @@ response) without needing a full atmospheric model.
   Surprises with mismatched Atlas versions usually trace back here.
 - Tests require `jedi-model-data` (>= 1.0.0); without it the `test/`
   subdirectory is skipped silently.
-- `quench` is build-on-by-default — turn off with `-DENABLE_QUENCH=OFF`
-  if you don't have jedicmake or want a faster build.
+- `quench` is built by default — turn off with `-DENABLE_QUENCH=OFF`
+  if you don't have jedicmake or want a faster build. BUMP is likewise
+  toggleable (`-DENABLE_BUMP=ON` by default); Torch support is opt-in
+  (`-DENABLE_TORCH=OFF` by default).
 - BUMP instrumentation is a separate compile flag
   (`-DENABLE_BUMP_INSTRUMENTATION=ON`) used for performance studies.
 - **Implicit vertical diffusion added (2026-05):** `DiffusionImpl.cc`

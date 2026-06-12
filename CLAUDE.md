@@ -10,6 +10,37 @@ to do things they've forgotten how to do.
 The user does not need to know that this file exists. Behave naturally — read
 this file as your operating manual, then talk to the user.
 
+## Workspace layout
+
+jedi-oracle is designed to sit **alongside** the JEDI code, inside a
+workspace directory the user owns:
+
+```
+<workspace>/                ← the "workspace root"
+├── jedi-oracle/            ← this repo; launch Claude from here
+├── jedi-bundle/            ← cloned code
+├── jedi-docs/
+├── jedi-tools/
+├── jedi-workflow/
+└── build/                  ← build tree(s)
+```
+
+Claude is launched from inside `jedi-oracle/`, so the cloned repos live at
+`../jedi-bundle`, `../jedi-docs`, and so on. `.claude/settings.json` grants
+access to the parent directory (`permissions.additionalDirectories`); if the
+user hits permission problems reaching `../`, point them at that setting or
+at launching with `claude --add-dir ..`.
+
+**Resolving the workspace root (do this once per session, remember the
+answer):** check for `../jedi-bundle/` first. If it exists, the workspace
+root is `..` (the sibling layout above). If not, check for `./jedi-bundle/`
+— older checkouts cloned everything *inside* jedi-oracle, and that legacy
+layout still works; the workspace root is then the jedi-oracle directory
+itself. Every path like `jedi-bundle/...` or `jedi-workflow/skylab/...` in
+this file and in the skills is relative to the workspace root. If neither
+location has clones yet, the user simply hasn't initialized — prefer the
+sibling layout (`..`) for anything you clone.
+
 ## Identity: knowledge base, not a project
 
 **jedi-oracle is a curated knowledge base, not a project.** It is a
@@ -62,36 +93,40 @@ present the **skills overview**. Do not repeat either on subsequent turns
 unless the user asks ("show me the skills again", "what can you do?", etc.)
 or invokes `/jedi-oracle`.
 
-If `jedi-bundle/`, `jedi-docs/`, `jedi-tools/`, and `jedi-workflow/` already
-exist at the repo root, the user has already initialized — skip the cloning
-prompts and go straight to the skills overview (one short paragraph, then ask
-what they want to work on).
+First resolve the workspace root (see **Workspace layout** above). If
+`jedi-bundle/`, `jedi-docs/`, `jedi-tools/`, and `jedi-workflow/` already
+exist at the workspace root, the user has already initialized — skip the
+cloning prompts and go straight to the skills overview (one short paragraph,
+then ask what they want to work on).
 
 ### Init flow
 
 Walk the user through this on first load. Be conversational, not
 script-like — one question at a time, and skip steps for anything already
-present.
+present. New clones go to the workspace root — i.e. `../` alongside
+jedi-oracle (the commands below assume Claude's working directory is the
+jedi-oracle checkout). If the user has a legacy nested checkout (clones
+already inside jedi-oracle), keep using that location; don't mix layouts.
 
 1. **`jedi-bundle/`** — if missing, offer to clone it:
-   `git clone https://github.com/jcsda-internal/jedi-bundle.git jedi-bundle`
+   `git clone https://github.com/jcsda-internal/jedi-bundle.git ../jedi-bundle`
    This is just the bundle wrapper (CMakeLists + scripts) — sub-repos are
    cloned later via `/jedi-getCode`.
 2. **`jedi-docs/`** — ask: *"Want me to clone jedi-docs alongside?"* If yes:
-   `git clone https://github.com/jcsda-internal/jedi-docs.git jedi-docs`
+   `git clone https://github.com/jcsda-internal/jedi-docs.git ../jedi-docs`
 3. **`jedi-tools/`** — ask: *"Want jedi-tools? It needs git-lfs enabled
    first."* Before cloning, run `git lfs version`. If git-lfs is missing,
    ask the user to install it (`brew install git-lfs` / `apt install
    git-lfs`) and run `git lfs install` once. Then:
-   `git clone https://github.com/jcsda-internal/jedi-tools.git jedi-tools`
+   `git clone https://github.com/jcsda-internal/jedi-tools.git ../jedi-tools`
 4. **`jedi-workflow/`** — ask: *"Want the workflow stack? That's skylab,
    ewok, simobs, and r2d2."* If yes:
    ```bash
-   mkdir -p jedi-workflow
-   git -C jedi-workflow clone https://github.com/jcsda-internal/skylab.git
-   git -C jedi-workflow clone https://github.com/jcsda-internal/ewok.git
-   git -C jedi-workflow clone https://github.com/jcsda-internal/simobs.git
-   git -C jedi-workflow clone https://github.com/jcsda-internal/r2d2.git
+   mkdir -p ../jedi-workflow
+   git -C ../jedi-workflow clone https://github.com/jcsda-internal/skylab.git
+   git -C ../jedi-workflow clone https://github.com/jcsda-internal/ewok.git
+   git -C ../jedi-workflow clone https://github.com/jcsda-internal/simobs.git
+   git -C ../jedi-workflow clone https://github.com/jcsda-internal/r2d2.git
    ```
 
 After cloning, present the skills overview.
@@ -150,9 +185,10 @@ read them before answering. Treat `jedi-knowledge/` as your working library:
   recently".
 
 When a question spans multiple repos, read multiple briefs in parallel. When
-the brief points to specific files in a cloned repo, read those files (the
-clones are real, just gitignored). The cloned code is always more
-authoritative than the brief, so verify before recommending specifics.
+the brief points to specific files in a cloned repo, read those files from
+the workspace root (normally `../jedi-bundle/...` etc. — see **Workspace
+layout**). The cloned code is always more authoritative than the brief, so
+verify before recommending specifics.
 
 If the relevant repo isn't cloned yet, say so and offer to run `/jedi-getCode` (or
 the appropriate clone command).
@@ -161,35 +197,45 @@ the appropriate clone command).
 
 ## What lives where
 
-Everything is under the `jedi-oracle/` repo root:
+The oracle repo holds only knowledge and skills; code lives beside it at the
+workspace root:
 
 ```
-jedi-oracle/
-├── CLAUDE.md                   ← you are here
-├── README.md
-├── jedi-knowledge/             ← tracked knowledge base
-│   ├── jedi-tips.md            ← team tips
-│   ├── coding-practices.md    ← coding standards and AI agent rules
-│   ├── workflow.md             ← skylab/ewok/simobs/r2d2 overview
-│   ├── jedi-bundle.md
-│   ├── jedi-docs.md
-│   ├── jedi-tools.md
-│   ├── oops.md, ufo.md, ioda.md, saber.md, vader.md, …
-│   ├── fv3-jedi.md, mpas-jedi.md, soca.md, coupling.md, …
-│   ├── skylab.md, ewok.md, simobs.md, r2d2.md
-│   └── external/               ← /jedi-addKnowledgeBase output (gitignored)
-├── .claude/skills/             ← slash command definitions
-├── jedi-bundle/                ← cloned (gitignored)
-├── jedi-docs/                  ← cloned, optional (gitignored)
-├── jedi-tools/                 ← cloned, optional (gitignored)
-├── jedi-workflow/              ← cloned, optional (gitignored)
+<workspace>/
+├── jedi-oracle/                ← this repo (launch Claude from here)
+│   ├── CLAUDE.md               ← you are here
+│   ├── README.md
+│   ├── jedi-knowledge/         ← tracked knowledge base
+│   │   ├── jedi-tips.md        ← team tips
+│   │   ├── coding-practices.md ← coding standards and AI agent rules
+│   │   ├── workflow.md         ← skylab/ewok/simobs/r2d2 overview
+│   │   ├── jedi-bundle.md
+│   │   ├── jedi-docs.md
+│   │   ├── jedi-tools.md
+│   │   ├── oops.md, ufo.md, ioda.md, saber.md, vader.md, …
+│   │   ├── fv3-jedi.md, mpas-jedi.md, soca.md, coupling.md, …
+│   │   ├── skylab.md, ewok.md, simobs.md, r2d2.md
+│   │   ├── project-notes/      ← personal notes (gitignored)
+│   │   └── external/           ← /jedi-addKnowledgeBase output (gitignored)
+│   ├── .claude/skills/         ← slash command definitions
+│   ├── .claude/settings.json   ← grants access to ../ (the workspace)
+│   ├── whatHasChanged.md       ← /jedi-updateRepos output (gitignored)
+│   └── externalKnowledge.md    ← /jedi-addKnowledgeBase index (gitignored)
+├── jedi-bundle/                ← cloned code (sub-repos inside)
+├── jedi-docs/                  ← cloned, optional
+├── jedi-tools/                 ← cloned, optional
+├── jedi-workflow/              ← cloned, optional
 │   ├── skylab/
 │   ├── ewok/
 │   ├── simobs/
 │   └── r2d2/
-├── whatHasChanged.md           ← /jedi-updateRepos output (gitignored)
-└── externalKnowledge.md        ← /jedi-addKnowledgeBase index (gitignored)
+└── build/                      ← build tree(s), user-managed
 ```
+
+Legacy layout: older checkouts cloned `jedi-bundle/`, `jedi-docs/`,
+`jedi-tools/`, and `jedi-workflow/` *inside* jedi-oracle (they're
+gitignored there). That still works — see the resolution rule in
+**Workspace layout**.
 
 ---
 

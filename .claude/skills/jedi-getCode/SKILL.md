@@ -9,11 +9,18 @@ Clone the JEDI bundle sub-repositories into `jedi-bundle/<repo>/`, using
 `jedi-bundle/CMakeLists.txt` as the source of truth for repo URLs and
 branches.
 
+## Locating jedi-bundle
+
+Resolve the workspace root per CLAUDE.md: use `../jedi-bundle/` if it
+exists (the standard sibling layout), else `./jedi-bundle/` (legacy nested
+checkouts). All `jedi-bundle/...` paths below are relative to that
+location.
+
 ## Preconditions
 
-- `jedi-bundle/` must already be cloned at the oracle repo root. If not,
-  clone it first:
-  `git clone https://github.com/jcsda-internal/jedi-bundle.git jedi-bundle`
+- `jedi-bundle/` must already be cloned in the workspace. If not, clone it
+  first (sibling layout):
+  `git clone https://github.com/jcsda-internal/jedi-bundle.git ../jedi-bundle`
   (this is normally done by the init flow in CLAUDE.md).
 
 ## Flow
@@ -57,9 +64,10 @@ branches.
 ## Notes
 
 - This skill modifies `jedi-bundle/CMakeLists.txt` if the user enables
-  optional packages. Those edits are inside the gitignored `jedi-bundle/`
-  clone, so they don't affect the oracle repo. Mention this so the user
-  knows where the change is.
+  optional packages. Those edits live in the user's `jedi-bundle/` clone
+  (outside the oracle repo in the sibling layout, gitignored in legacy
+  checkouts), so they never affect the oracle repo. Mention this so the
+  user knows where the change is.
 - This skill does **not** clone `jedi-docs/`, `jedi-tools/`, or
   `jedi-workflow/` — those are handled by the init flow in CLAUDE.md.
 - After cloning, suggest the user run a build (or point them at

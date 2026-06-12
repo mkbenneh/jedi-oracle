@@ -16,7 +16,11 @@ sound speed, freezing temperatures, enthalpy, entropy, etc.
 
 The science is unchanged from upstream; the JEDI fork supplies CMake
 plumbing and module-export configuration so downstream JEDI code can
-`find_package(gsw)` and `target_link_libraries(... gsw)`.
+`find_package(gsw)` and `target_link_libraries(... gsw)`. Current
+version on develop: **3.0.8** (`CMakeLists.txt`). The repo is
+low-churn — recent commits are version bumps, compiler compatibility
+(PGI/NVHPC support, per-compiler variants of `gsw_mod_check_data.F90`),
+and ecbuild plumbing.
 
 ## How it fits into the bundle
 
@@ -25,7 +29,10 @@ plumbing and module-export configuration so downstream JEDI code can
   by the check program).
 - **Depended on by:** `vader` (`find_package(gsw QUIET)`; if found,
   marine recipes — TEOS-10–based ocean variable conversions — are
-  compiled in). Also used by `soca` and other ocean components.
+  compiled in), `ufo` (`find_package(gsw QUIET)`; if found, the marine
+  observation operators are compiled in — look for
+  `GSW FOUND; Including Marine Observation Operators` at configure),
+  and `soca` / other ocean components.
 - **Build position:** can be built very early; has no JEDI
   prerequisites.
 
@@ -41,10 +48,11 @@ plumbing and module-export configuration so downstream JEDI code can
     `gsw_mod_check_data.F90`, `gsw_mod_error_functions.f90`,
     `gsw_mod_toolbox.f90` (the umbrella module — `use gsw_mod_toolbox`
     to access the full API).
-- `toolbox/` — one Fortran source per GSW function (~250 files:
+- `toolbox/` — one Fortran source per GSW function (~184 files:
   `gsw_ct_from_t.f90`, `gsw_rho.f90`, `gsw_sa_from_sp.f90`,
-  `gsw_pt_from_ct.f90`, `gsw_freezing_*.f90`, `gsw_enthalpy_*.f90`, ...).
-  Each is a thin numerical implementation of one TEOS-10 quantity.
+  `gsw_pt_from_ct.f90`, `gsw_ct_freezing*.f90`,
+  `gsw_ct_from_enthalpy*.f90`, ...). Each is a thin numerical
+  implementation of one TEOS-10 quantity.
 - `test/` — verification harness.
   - `gsw_check_functions.f90` — runs every function against tabulated
     check values from `gsw_data_v3_0.nc`.
@@ -53,7 +61,9 @@ plumbing and module-export configuration so downstream JEDI code can
     modify; the toolbox's correctness is validated against it).
   - `makefile`, `CMakeLists.txt`.
 - `scripts/` — code-generation utilities used to regenerate the toolbox
-  from MATLAB sources (most users do not run these).
+  from MATLAB sources (`mat2f90.sh`, `make_mod.sh`,
+  `make_check_data.py`, `make_saar_data.py`; most users do not run
+  these).
 - `cmake/` — compiler flags + ecbuild integration.
 - `gsw-import.cmake.in` — package import file consumed by
   `find_package(gsw)`.
@@ -105,7 +115,9 @@ plumbing and module-export configuration so downstream JEDI code can
   `CMakeLists.txt`, but the test program reads NetCDF — running tests
   requires a Fortran NetCDF available at runtime.
 - Files use a mix of `.f90` and `.F90` — `.F90` ones go through the
-  preprocessor (e.g. `gsw_mod_check_data.F90`).
+  preprocessor. In particular `modules/gsw_mod_check_data.F90` carries
+  per-compiler variants behind preprocessor guards (added for
+  gfortran-11 and other compiler quirks) — don't flatten it.
 
 ## Further reading
 

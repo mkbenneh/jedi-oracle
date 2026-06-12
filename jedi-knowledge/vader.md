@@ -22,10 +22,10 @@ the default cookbook in YAML.
 
 ## How it fits into the bundle
 
-- **Depends on:** `oops` (1.7.0+ in this repo, currently `oops 1.10.0`),
-  atlas (via oops), MPI, NetCDF, Boost. Optionally `gsw` (the GSW-Fortran
-  toolbox) — when present, marine recipes (TEOS-10 / ocean conversions)
-  get compiled in.
+- **Depends on:** `oops 1.10.0`, atlas (via oops), MPI, NetCDF, Boost.
+  Optionally `gsw` (the GSW-Fortran toolbox) — when present, marine
+  recipes (TEOS-10 / ocean conversions) get compiled in. The vader
+  project version itself is 1.7.0 (what saber's `find_package` pins).
 - **Depended on by:** `saber`
   (`find_package(vader 1.7.0 REQUIRED)` in `saber/CMakeLists.txt`), and
   most model interfaces (fv3-jedi, mpas-jedi, soca) use VADER inside
@@ -43,12 +43,15 @@ the default cookbook in YAML.
     `oops::Variable → [RecipeName, ...]`. Glance at this to see what is
     offered out-of-the-box.
   - `VaderParameters.h` — YAML configuration schema.
-  - `recipes/` — atmosphere/microphysics recipes (~80 files):
+  - `recipes/` — atmosphere/microphysics/marine recipes (~105 files):
     `AirTemperature_*.cc`, `AirPotentialTemperature_*.cc`,
     `AirPressure*`, `Cloud*MixingRatio*`, `WaterVapor*`,
-    `HydrostaticExnerLevels`, `EastwardWindAt10m`,
-    `ParticulateMatter2p5`, etc. Multiple variants per output variable
-    (suffix `_A`, `_B`, `_C`) take different input combinations.
+    `Geopotential*`, `HydrostaticExnerLevels`, `EastwardWindAt10m` /
+    `NorthwardWindAt10m` / `WindReductionFactorAt10m`,
+    `ParticulateMatter2p5`, `SeaWaterTemperature` /
+    `SeaWaterPotentialTemperature` (gsw-gated), etc. Multiple variants
+    per output variable (suffix `_A`, `_B`, `_C`) take different input
+    combinations.
 - `src/mo/` — Met Office–contributed atmospheric recipes and helper code
   (`eval_air_density`, `eval_air_temperature`, `eval_exner`,
   `eval_hydrostatic_balance`, `eval_moisture_incrementing_operator`,
@@ -58,17 +61,19 @@ the default cookbook in YAML.
 - `src/OceanConversions/` — Fortran↔C++ glue for marine recipes.
   `OceanConversions.interface.F90` / `.h` wrap GSW-Fortran calls; only
   built when `gsw` is found.
-- `test/vader/` — gtest-based unit tests: `TestVader.cc`,
-  `TestRecipe.cc`, `TestPlanVariable.cc`, `TestPrintVader.cc`, plus an
-  `mo/` subdir for MO recipe tests.
+- `test/vader/` — unit tests: `TestVader.cc`, `TestRecipe.cc`,
+  `TestPlanVariable.cc`, `TestPrintVader.cc`, `TestUtils.cc`, plus an
+  `mo/` subdir (`TestCheckLookupTables.cc` for the MO lookup tables).
 - `test/testinput/` — YAML configuration fixtures used by the tests.
 - `tools/cpplint.py` — coding-norms checker.
 
 ## Key entry points
 
 - `src/vader/vader.h` — the `vader::Vader` class. Its
-  `changeVar(FieldSet&, oops::Variables)` method is the main API model
-  code calls.
+  `changeVar(atlas::FieldSet &, oops::Variables &)` method (returns the
+  variables it could not produce) is the main NL API model code calls;
+  `changeVarTraj` / `changeVarTL` / `changeVarAD` are the trajectory
+  and TL/AD counterparts.
 - `src/vader/DefaultCookbook.h` — the canonical list of "what variables
   can VADER produce by default and via which recipe(s)".
 - `src/vader/RecipeBase.h` — the recipe contract; copy this when
@@ -89,7 +94,8 @@ the default cookbook in YAML.
 - **Add a new recipe**:
   1. Add `recipes/MyVariable.h` + `recipes/MyVariable_A.cc` (TL/AD
      methods if linearizable).
-  2. Register in `src/vader/CMakeLists.txt`.
+  2. List the sources in `src/CMakeLists.txt` (there is no per-subdir
+     CMakeLists under `src/vader/`).
   3. Add an entry to `DefaultCookbook.h` mapping the output
      `oops::Variable` to the new recipe name.
   4. Add a test recipe entry under `test/`.

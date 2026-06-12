@@ -63,11 +63,13 @@ This is the right command to suggest when:
      pulls the full issue and discussion with `gh` and writes a report
      covering the problem, what the code shows, and possible solutions.
 
-4. **Check the workspace state.** If `jedi-bundle/`, `jedi-docs/`,
-   `jedi-tools/`, or `jedi-workflow/` are missing at the oracle root,
-   mention this and offer to walk through the init flow from
-   `CLAUDE.md` (clone the missing pieces). If everything is already in
-   place, skip this and go straight to the next step.
+4. **Check the workspace state.** Resolve the workspace root per
+   CLAUDE.md (`../` in the sibling layout, the oracle root in legacy
+   nested checkouts). If `jedi-bundle/`, `jedi-docs/`, `jedi-tools/`, or
+   `jedi-workflow/` are missing there, mention this and offer to walk
+   through the init flow from `CLAUDE.md` (clone the missing pieces —
+   new clones go alongside jedi-oracle at `../`). If everything is
+   already in place, skip this and go straight to the next step.
 
 5. **Invite the next step.** End with a short prompt like *"What
    would you like to work on?"* or *"Want me to start with one of

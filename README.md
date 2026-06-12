@@ -14,14 +14,32 @@ This repo itself does not contain JEDI source code. Instead, it ships:
 - **`.claude/skills/`** — slash commands that fetch code, keep it current, and
   let you grow the knowledge base over time.
 
+jedi-oracle is meant to sit **alongside** your JEDI checkouts, inside a
+workspace directory:
+
+```
+my-jedi-workspace/
+├── jedi-oracle/      ← this repo; run claude from here
+├── jedi-bundle/
+├── jedi-docs/
+├── jedi-tools/
+├── jedi-workflow/    ← skylab, ewok, simobs, r2d2
+└── build/
+```
+
 On first use, Claude will offer to clone `jedi-bundle`, `jedi-docs`,
-`jedi-tools`, and `jedi-workflow` (containing skylab, ewok, simobs, r2d2) into
-this directory. Those clones are gitignored — they are working checkouts, not
-part of the oracle repo.
+`jedi-tools`, and `jedi-workflow` next to jedi-oracle. If you already have
+checkouts, just put (or clone) jedi-oracle beside them — Claude will find
+them. The repo ships a `.claude/settings.json` that grants Claude access to
+the parent workspace directory.
+
+(Older versions of this repo cloned everything *inside* jedi-oracle. That
+legacy layout still works — the skills check both locations.)
 
 ## Quick start
 
 ```bash
+mkdir my-jedi-workspace && cd my-jedi-workspace   # or cd to an existing JEDI workspace
 git clone https://github.com/<your-org>/jedi-oracle.git
 cd jedi-oracle
 claude
