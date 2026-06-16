@@ -38,7 +38,7 @@ legacy layout still works — the skills check both locations.)
 
 ## Quick start
 
-- User must have claude CLI installed.
+- User must have claude CLI installed. See claude code docs - https://code.claude.com/docs/en/quickstart
 
 ```bash
 mkdir my-jedi-workspace && cd my-jedi-workspace   # or cd to an existing JEDI workspace
